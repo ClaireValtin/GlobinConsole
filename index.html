@@ -1,0 +1,989 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>Globin Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============ Tokens ============ */
+  :root {
+    --bg: #F2F4F0;
+    --surface: #FFFFFF;
+    --surface-2: #E8EAE3;
+    --surface-3: #DDE0D6;
+    --text: #1B211D;
+    --text-muted: #5A6459;
+    --text-faint: #8B948A;
+    --border: #D5D9CE;
+    --border-strong: #B9C0B2;
+
+    --accent: #7A2331;         /* garnet — brand */
+    --accent-strong: #5E1A25;
+    --accent-soft: #F3E3E1;
+    --accent-ink: #4A1520;
+
+    --info: #2B5C63;           /* deep teal-slate — links / secondary */
+    --info-soft: #E1EDEC;
+
+    --sev-benign: #2B7A4C;
+    --sev-benign-soft: #E1F0E5;
+    --sev-carrier: #2B6E8F;
+    --sev-carrier-soft: #E1EDF3;
+    --sev-moderate: #A8641A;
+    --sev-moderate-soft: #F5E7D4;
+    --sev-severe: #B23327;
+    --sev-severe-soft: #F5DFDB;
+    --sev-review: #6B5B95;
+    --sev-review-soft: #E9E4F2;
+
+    --shadow: 0 1px 2px rgba(27,33,29,0.06), 0 8px 24px -12px rgba(27,33,29,0.18);
+    --radius: 10px;
+    --font-display: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
+    --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141814;
+      --surface: #1C2119;
+      --surface-2: #242A20;
+      --surface-3: #2E3527;
+      --text: #E8ECE4;
+      --text-muted: #A3AC9B;
+      --text-faint: #737C6D;
+      --border: #333B2C;
+      --border-strong: #444E3A;
+
+      --accent: #E19AA3;
+      --accent-strong: #EDB6BD;
+      --accent-soft: #3A2024;
+      --accent-ink: #F6D3D7;
+
+      --info: #7FBAC2;
+      --info-soft: #1E2E30;
+
+      --sev-benign: #6FC08B;
+      --sev-benign-soft: #1D2E22;
+      --sev-carrier: #74B4D6;
+      --sev-carrier-soft: #1B2A32;
+      --sev-moderate: #E0A24F;
+      --sev-moderate-soft: #332715;
+      --sev-severe: #E28277;
+      --sev-severe-soft: #34201C;
+      --sev-review: #B7A6DE;
+      --sev-review-soft: #292236;
+
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 28px -14px rgba(0,0,0,0.55);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #141814;
+    --surface: #1C2119;
+    --surface-2: #242A20;
+    --surface-3: #2E3527;
+    --text: #E8ECE4;
+    --text-muted: #A3AC9B;
+    --text-faint: #737C6D;
+    --border: #333B2C;
+    --border-strong: #444E3A;
+
+    --accent: #E19AA3;
+    --accent-strong: #EDB6BD;
+    --accent-soft: #3A2024;
+    --accent-ink: #F6D3D7;
+
+    --info: #7FBAC2;
+    --info-soft: #1E2E30;
+
+    --sev-benign: #6FC08B;
+    --sev-benign-soft: #1D2E22;
+    --sev-carrier: #74B4D6;
+    --sev-carrier-soft: #1B2A32;
+    --sev-moderate: #E0A24F;
+    --sev-moderate-soft: #332715;
+    --sev-severe: #E28277;
+    --sev-severe-soft: #34201C;
+    --sev-review: #B7A6DE;
+    --sev-review-soft: #292236;
+
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 28px -14px rgba(0,0,0,0.55);
+  }
+
+  * { box-sizing: border-box; }
+  html { color-scheme: light dark; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; margin: 0; }
+  code, .mono { font-family: var(--font-mono); }
+  a { color: var(--info); }
+  ::selection { background: var(--accent-soft); color: var(--accent-ink); }
+
+  .skip-link:focus {
+    position: fixed; top: 8px; left: 8px; z-index: 100;
+    background: var(--surface); color: var(--text); padding: 8px 12px; border-radius: 6px; box-shadow: var(--shadow);
+  }
+
+  /* ============ Layout shell ============ */
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px 80px; }
+
+  header.masthead {
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .masthead-inner {
+    max-width: 1180px; margin: 0 auto; padding: 18px 24px;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand-mark {
+    font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: 0.01em; color: var(--text);
+  }
+  .brand-mark em { font-style: normal; color: var(--accent); }
+  .gene-chip {
+    font-family: var(--font-mono); font-size: 12.5px; color: var(--text-muted);
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px;
+    padding: 3px 10px;
+  }
+  nav.masthead-nav { display: flex; gap: 20px; font-size: 13.5px; }
+  nav.masthead-nav a { color: var(--text-muted); text-decoration: none; font-weight: 500; }
+  nav.masthead-nav a:hover { color: var(--accent); }
+
+  .intro {
+    padding: 40px 0 28px;
+  }
+  .intro h1 { font-size: 30px; max-width: 30ch; }
+  .intro p.lede { max-width: 62ch; color: var(--text-muted); font-size: 16px; margin: 12px 0 0; }
+
+  .disclaimer {
+    margin-top: 20px;
+    border: 1px solid var(--border-strong);
+    border-left: 3px solid var(--sev-review);
+    background: var(--sev-review-soft);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    color: var(--text);
+    display: flex;
+    gap: 10px;
+    max-width: 74ch;
+  }
+  .disclaimer strong { color: var(--sev-review); }
+
+  section { padding: 36px 0; }
+  section + section { border-top: 1px solid var(--border); }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+  .section-head h2 { font-size: 21px; }
+  .section-head .hint { font-size: 13px; color: var(--text-faint); }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 6px;
+  }
+
+  /* ============ Combiner ============ */
+  .combiner-grid {
+    display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 16px;
+  }
+  @media (max-width: 760px) { .combiner-grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .allele-card { padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .allele-label {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .allele-label .n { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; background: var(--surface-3); color: var(--text); font-size: 11px; font-weight:700; }
+
+  .combobox { position: relative; }
+  .combobox input[type="text"] {
+    width: 100%; padding: 11px 38px 11px 12px; border-radius: 8px; border: 1px solid var(--border-strong);
+    background: var(--surface); color: var(--text); font-family: var(--font-mono); font-size: 14px;
+  }
+  .combobox input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .combobox .clear-btn {
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--text-faint); cursor: pointer; font-size: 16px; padding: 4px 6px; border-radius: 6px;
+  }
+  .combobox .clear-btn:hover { color: var(--text); background: var(--surface-2); }
+  .combobox .clear-btn:focus-visible { outline: 2px solid var(--accent); }
+
+  .combo-list {
+    position: absolute; z-index: 20; top: calc(100% + 4px); left: 0; right: 0;
+    background: var(--surface); border: 1px solid var(--border-strong); border-radius: 8px;
+    box-shadow: var(--shadow); max-height: 320px; overflow-y: auto; padding: 6px; display: none;
+  }
+  .combo-list.open { display: block; }
+  .combo-group-label {
+    font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-faint);
+    padding: 8px 8px 4px;
+  }
+  .combo-option {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 8px 8px; border-radius: 6px; cursor: pointer; font-size: 13.5px;
+  }
+  .combo-option:hover, .combo-option.active { background: var(--accent-soft); }
+  .combo-option .co-name { font-weight: 600; }
+  .combo-option .co-hgvs { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+  .combo-empty { padding: 14px 10px; font-size: 13px; color: var(--text-faint); }
+
+  .selected-chip {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+  }
+  .selected-chip .sc-main { display: flex; flex-direction: column; gap: 2px; }
+  .selected-chip .sc-name { font-weight: 600; font-size: 14px; }
+  .selected-chip .sc-hgvs { font-family: var(--font-mono); font-size: 12.5px; color: var(--text-muted); }
+  .class-tag {
+    display: inline-block; font-size: 10.5px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 999px; margin-top: 4px; width: fit-content;
+  }
+
+  .btn {
+    font-family: var(--font-body); font-weight: 600; font-size: 14px; border-radius: 8px; border: 1px solid transparent;
+    padding: 12px 18px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-strong); }
+  .btn-primary:focus-visible, .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn-ghost { background: transparent; color: var(--text-muted); border-color: var(--border-strong); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--text-faint); }
+
+  .combiner-actions { display: flex; align-items: center; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+
+  /* ============ Result panel ============ */
+  .result {
+    margin-top: 20px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface);
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .result-stripe { height: 5px; }
+  .result-body { padding: 22px 24px 24px; }
+  .result-empty { padding: 32px 24px; color: var(--text-faint); font-size: 14px; text-align: center; }
+  .result-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .sev-pill {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.02em; padding: 4px 11px; border-radius: 999px;
+  }
+  .result h3 { font-size: 22px; margin-bottom: 4px; }
+  .result .genotype-line { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+  .result-notes { display: grid; gap: 12px; }
+  .note-block { font-size: 14px; }
+  .note-block .nb-label { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
+  .note-block ul { margin: 4px 0 0; padding-left: 18px; }
+  .note-block li { margin-bottom: 4px; }
+  .flag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .flag {
+    font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid var(--border-strong); color: var(--text-muted); background: var(--surface-2);
+  }
+  .flag.warn { color: var(--sev-review); background: var(--sev-review-soft); border-color: transparent; }
+
+  /* ============ Reference browser ============ */
+  .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .chip-filter {
+    font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--border-strong);
+    background: var(--surface); color: var(--text-muted); cursor: pointer;
+  }
+  .chip-filter.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .search-row { margin-bottom: 18px; }
+  .search-row input {
+    width: 100%; max-width: 420px; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-strong);
+    background: var(--surface); color: var(--text); font-size: 14px;
+  }
+
+  .variant-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+  table.variant-table { width: 100%; border-collapse: collapse; min-width: 760px; }
+  .variant-table thead th {
+    text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--text-faint); padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--surface-2);
+    position: sticky; top: 0;
+  }
+  .variant-table tbody tr { border-bottom: 1px solid var(--border); cursor: pointer; }
+  .variant-table tbody tr:last-child { border-bottom: none; }
+  .variant-table tbody tr:hover { background: var(--surface-2); }
+  .variant-table td { padding: 12px 14px; font-size: 13.5px; vertical-align: top; }
+  .variant-table td.hgvs { font-family: var(--font-mono); font-size: 12.5px; color: var(--text-muted); white-space: nowrap; }
+  .variant-table td.name { font-weight: 600; }
+  .class-badge {
+    display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+  }
+  .conf-dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:6px; vertical-align:middle; }
+
+  .detail-row td { background: var(--surface-2); padding: 16px 20px 20px; }
+  .detail-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 14px 24px; }
+  .detail-field .df-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 3px; }
+  .detail-field .df-value { font-size: 13.5px; }
+
+  footer.site-footer {
+    border-top: 1px solid var(--border); margin-top: 20px; padding-top: 28px;
+    font-size: 12.5px; color: var(--text-faint); display: flex; flex-direction: column; gap: 6px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .combo-list, .result { transition: opacity .12s ease; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+</style>
+
+<a class="skip-link visually-hidden" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="brand">
+      <span class="brand-mark">Globin <em>Console</em></span>
+      <span class="gene-chip">HBB · NM_000518.5 · GRCh38.p14</span>
+    </div>
+    <nav class="masthead-nav">
+      <a href="#combiner">Genotype combiner</a>
+      <a href="#reference">Variant reference</a>
+      <a href="#methodology">Methodology</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+
+  <div class="intro">
+    <p class="eyebrow">Beta-globin variant interpretation</p>
+    <h1>Combine two HBB alleles into a working diagnosis.</h1>
+    <p class="lede">A curated reference of clinically significant HBB (β-globin) variants and a genotype combiner that reasons through zygosity and compound heterozygosity — β-thalassemia, sickle cell disease, HbC/E/D/O, Hb Lepore, and the benign variants that shouldn't be over-called.</p>
+    <div class="disclaimer">
+      <span aria-hidden="true">⚠</span>
+      <span><strong>Decision-support draft, not a final report.</strong> Genotype–phenotype correlation in hemoglobinopathies is variable and modified by co-inherited alpha-globin status, HBG promoter/HPFH variants, and other genetic modifiers. Large deletions, Hb Lepore, and HPFH deletions are <strong>not detectable by HBB-only Sanger sequencing</strong> — a clean point-mutation result doesn't rule them out. Confirm every call against current ClinVar/HbVar records and correlate with hematology (CBC, HPLC/electrophoresis) before it goes in a patient report.</span>
+    </div>
+  </div>
+
+  <section id="combiner">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Step 1 → 2</p>
+        <h2>Genotype combiner</h2>
+      </div>
+      <span class="hint">Pick the two alleles found on Sanger — same variant twice for homozygous, "Normal / reference" for a single het call.</span>
+    </div>
+
+    <div class="combiner-grid">
+      <div class="card allele-card">
+        <span class="allele-label"><span class="n">1</span> Allele 1</span>
+        <div class="combobox" data-slot="1">
+          <input type="text" placeholder="Search by name, e.g. HbS, Cd39, IVS-I-110, c.20A&gt;T…" autocomplete="off" aria-label="Search allele 1" />
+          <button class="clear-btn" type="button" aria-label="Clear allele 1" title="Clear">×</button>
+          <div class="combo-list" role="listbox"></div>
+        </div>
+        <div class="selected-preview"></div>
+      </div>
+      <div class="card allele-card">
+        <span class="allele-label"><span class="n">2</span> Allele 2</span>
+        <div class="combobox" data-slot="2">
+          <input type="text" placeholder="Search by name, e.g. HbS, Cd39, IVS-I-110, c.20A&gt;T…" autocomplete="off" aria-label="Search allele 2" />
+          <button class="clear-btn" type="button" aria-label="Clear allele 2" title="Clear">×</button>
+          <div class="combo-list" role="listbox"></div>
+        </div>
+        <div class="selected-preview"></div>
+      </div>
+    </div>
+
+    <div class="combiner-actions">
+      <button class="btn btn-primary" id="interpret-btn">Interpret genotype</button>
+      <button class="btn btn-ghost" id="reset-btn">Reset</button>
+    </div>
+
+    <div id="result-wrap"></div>
+  </section>
+
+  <section id="reference">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Reference · 58 curated entries</p>
+        <h2>HBB variant atlas</h2>
+      </div>
+      <span class="hint">Click a row for mechanism, population data and sourcing confidence.</span>
+    </div>
+
+    <div class="search-row">
+      <input type="text" id="ref-search" placeholder="Filter by name, HGVS, or population…" />
+    </div>
+    <div class="filter-row" id="filter-row"></div>
+
+    <div class="variant-table-wrap">
+      <table class="variant-table">
+        <thead>
+          <tr>
+            <th style="width:26%">Variant</th>
+            <th style="width:16%">HGVS c.</th>
+            <th style="width:16%">Class</th>
+            <th>Population / notes</th>
+          </tr>
+        </thead>
+        <tbody id="variant-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="methodology">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">How this was built</p>
+        <h2>Methodology &amp; sources</h2>
+      </div>
+    </div>
+    <div class="detail-grid" style="max-width: 900px;">
+      <div class="detail-field">
+        <div class="df-label">Coordinate system</div>
+        <div class="df-value">All HGVS coding (c.) notation is relative to the MANE Select transcript NM_000518.5 on GRCh38.p14 (NC_000011.10), consistent with the HBB_MANE_sequences.docx reference in this project.</div>
+      </div>
+      <div class="detail-field">
+        <div class="df-label">Primary sources</div>
+        <div class="df-value">ClinVar (NCBI), HbVar (globin.bx.psu.edu), OMIM (141900, 603903, 613985), Agouti et al. 2008 and Belmokhtar et al. 2022 for Moroccan allele frequencies, and standard hemoglobinopathy literature.</div>
+      </div>
+      <div class="detail-field">
+        <div class="df-label">Confidence marking</div>
+        <div class="df-value"><span class="conf-dot" style="background:var(--sev-benign)"></span><strong>Confirmed</strong> — HGVS cross-checked directly against a live ClinVar record. <span class="conf-dot" style="background:var(--sev-moderate)"></span><strong>Reported</strong> — literature/HbVar consensus, recommend re-confirming locally before it enters a patient-facing report.</div>
+      </div>
+      <div class="detail-field">
+        <div class="df-label">Scope</div>
+        <div class="df-value">~58 clinically significant variants were curated, not an exhaustive database (HbVar alone lists 900+ HBB alleles, most ultra-rare/uncharacterized). HPFH and large-deletion entries are included as interpretive notes, not Sanger-callable findings.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <span>Globin Console — internal reference tool for HBB Sanger sequencing analysis. Built 2026-09-01.</span>
+    <span>Not a diagnostic device. Every combined interpretation should be corroborated against current ClinVar/HbVar entries and full hematologic workup before clinical use.</span>
+  </footer>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============================================================
+     1. VARIANT DATA
+     class: normal | benign | beta0 | bplus_severe | bplus_mild | bplus_silent
+            | hbS | hbC | hbE | hbD | hbO | lepore | struct_other | info
+     confidence: "confirmed" (ClinVar-verified) | "reported" (lit/HbVar consensus)
+  ============================================================ */
+  var CLASS_META = {
+    normal:       { label: "Reference / normal", color: "var(--sev-benign)", soft: "var(--sev-benign-soft)" },
+    benign:       { label: "Benign polymorphism", color: "var(--sev-benign)", soft: "var(--sev-benign-soft)" },
+    beta0:        { label: "β⁰-thalassemia", color: "var(--sev-severe)", soft: "var(--sev-severe-soft)" },
+    bplus_severe: { label: "β⁺-thalassemia (severe)", color: "var(--sev-moderate)", soft: "var(--sev-moderate-soft)" },
+    bplus_mild:   { label: "β⁺-thalassemia (mild)", color: "var(--sev-moderate)", soft: "var(--sev-moderate-soft)" },
+    bplus_silent: { label: "β⁺-thalassemia (silent)", color: "var(--sev-carrier)", soft: "var(--sev-carrier-soft)" },
+    hbS:          { label: "Structural — HbS", color: "var(--sev-severe)", soft: "var(--sev-severe-soft)" },
+    hbC:          { label: "Structural — HbC", color: "var(--sev-moderate)", soft: "var(--sev-moderate-soft)" },
+    hbE:          { label: "Structural — HbE", color: "var(--sev-moderate)", soft: "var(--sev-moderate-soft)" },
+    hbD:          { label: "Structural — Hb D-Punjab", color: "var(--sev-moderate)", soft: "var(--sev-moderate-soft)" },
+    hbO:          { label: "Structural — Hb O-Arab", color: "var(--sev-moderate)", soft: "var(--sev-moderate-soft)" },
+    lepore:       { label: "Structural — Hb Lepore", color: "var(--sev-moderate)", soft: "var(--sev-moderate-soft)" },
+    struct_other: { label: "Structural — rare", color: "var(--sev-review)", soft: "var(--sev-review-soft)" },
+    info:         { label: "Modifier / informational", color: "var(--sev-carrier)", soft: "var(--sev-carrier-soft)" }
+  };
+
+  var GROUP_META = {
+    beta0:      "β⁰-thalassemia",
+    bplus:      "β⁺-thalassemia",
+    structural: "Structural hemoglobin variants",
+    hpfh:       "HPFH & δβ-modifiers",
+    benign:     "Silent / benign polymorphisms"
+  };
+
+  var NORMAL_ALLELE = {
+    id: "normal", name: "Normal / reference (no variant)", legacy: "—", hgvs_c: "—", hgvs_p: "—",
+    location: "—", mechanism: "Wild-type sequence", cls: "normal", group: "beta0",
+    significance: "—", population: "Reference allele", phenotype: "No effect.",
+    confidence: "confirmed", selectable: true, pinned: true
+  };
+
+  var VARIANTS = [
+    // ---------------- β0-thalassemia ----------------
+    { id:"cd39", name:"Cd39 (C>T)", legacy:"Codon 39 nonsense", hgvs_c:"c.118C>T", hgvs_p:"p.(Gln40Ter)", location:"Exon 2", mechanism:"Nonsense", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Most common β⁰ allele in Morocco (≈26.6% of thalassemia alleles) and across the Mediterranean.", phenotype:"Homozygous → thalassemia major. Compound het with any β⁺ → intermedia/major.", confidence:"confirmed" },
+    { id:"fsc8", name:"FSC-8 (−AA)", legacy:"Frameshift codon 8", hgvs_c:"c.25_26delAA", hgvs_p:"p.(Lys9Valfs)", location:"Exon 1", mechanism:"Frameshift deletion", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"2nd most common Moroccan allele (≈13.9%); widespread Mediterranean.", phenotype:"Homozygous → thalassemia major.", confidence:"reported" },
+    { id:"fsc6", name:"FSC-6 (−A)", legacy:"Frameshift codon 6", hgvs_c:"c.20delA", hgvs_p:"p.(Glu7Argfs)", location:"Exon 1", mechanism:"Frameshift deletion", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Moroccan (≈5.7%); Mediterranean-wide.", phenotype:"Homozygous → thalassemia major.", confidence:"reported" },
+    { id:"ivsi1ga", name:"IVS-I-1 (G>A)", legacy:"Splice donor intron 1", hgvs_c:"c.92+1G>A", hgvs_p:"—", location:"Intron 1, 5′ splice site", mechanism:"Splice-site (abolished)", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Moroccan (≈5.06%); very common Mediterranean / Middle East.", phenotype:"Homozygous → thalassemia major.", confidence:"confirmed" },
+    { id:"ivsi1gt", name:"IVS-I-1 (G>T)", legacy:"Splice donor intron 1", hgvs_c:"c.92+1G>T", hgvs_p:"—", location:"Intron 1, 5′ splice site", mechanism:"Splice-site (abolished)", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Common in Asian-Indian populations.", phenotype:"Homozygous → thalassemia major.", confidence:"confirmed" },
+    { id:"ivsi2tc", name:"IVS-I-2 (T>C)", legacy:"Splice donor intron 1", hgvs_c:"c.92+2T>C", hgvs_p:"—", location:"Intron 1", mechanism:"Splice-site (abolished)", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Moroccan (≈5.06%).", phenotype:"Homozygous → thalassemia major.", confidence:"reported" },
+    { id:"ivsi2tg", name:"IVS-I-2 (T>G)", legacy:"Splice donor intron 1", hgvs_c:"c.92+2T>G", hgvs_p:"—", location:"Intron 1", mechanism:"Splice-site (abolished)", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Moroccan (≈3.16%).", phenotype:"Homozygous → thalassemia major.", confidence:"reported" },
+    { id:"ivsii1", name:"IVS-II-1 (G>A)", legacy:"Splice donor intron 2", hgvs_c:"c.315+1G>A", hgvs_p:"—", location:"Intron 2", mechanism:"Splice-site (abolished)", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Moroccan (≈2.5%); Mediterranean.", phenotype:"Homozygous → thalassemia major.", confidence:"reported" },
+    { id:"cd37", name:"Cd37 (TGG>TGA)", legacy:"Codon 37 nonsense", hgvs_c:"c.114G>A", hgvs_p:"p.(Trp38Ter)", location:"Exon 2", mechanism:"Nonsense", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Moroccan (≈3.16%); also reported Saudi/Kuwaiti cohorts.", phenotype:"Homozygous → thalassemia major.", confidence:"confirmed" },
+    { id:"fsc5", name:"FSC-5 (−CT)", legacy:"Frameshift codon 5", hgvs_c:"c.17_18delCT", hgvs_p:"p.(Pro6Argfs)", location:"Exon 1", mechanism:"Frameshift deletion", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Greek origin; also reported Syrian and North African families.", phenotype:"Homozygous → thalassemia major.", confidence:"confirmed" },
+    { id:"cd15tag", name:"Cd15 (TGG>TAG)", legacy:"Codon 15 nonsense (TAG)", hgvs_c:"c.47G>A", hgvs_p:"p.(Trp16Ter)", location:"Exon 1", mechanism:"Nonsense", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Reported North African / Mediterranean.", phenotype:"Homozygous → thalassemia major.", confidence:"confirmed" },
+    { id:"cd15tga", name:"Cd15 (TGG>TGA)", legacy:"Codon 15 nonsense (TGA) — distinct from TAG above", hgvs_c:"c.48G>A", hgvs_p:"p.(Trp16Ter)", location:"Exon 1", mechanism:"Nonsense", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Reported worldwide; do not confuse with Cd15(TGG>TAG).", phenotype:"Homozygous → thalassemia major.", confidence:"confirmed" },
+    { id:"cd17", name:"Cd17 (A>T)", legacy:"Codon 17 nonsense", hgvs_c:"c.52A>T", hgvs_p:"p.(Lys18Ter)", location:"Exon 1", mechanism:"Nonsense", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"One of the most common Chinese / Southeast-Asian β⁰ alleles.", phenotype:"Homozygous → thalassemia major.", confidence:"confirmed" },
+    { id:"cd16", name:"Cd16 (−C)", legacy:"Frameshift codon 16", hgvs_c:"c.51delC", hgvs_p:"p.(Lys18Argfs)", location:"Exon 1", mechanism:"Frameshift deletion", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Asian-Indian founder mutation.", phenotype:"Homozygous → thalassemia major.", confidence:"confirmed" },
+    { id:"cd89", name:"Cd8/9 (+G)", legacy:"Frameshift codon 8/9 insertion", hgvs_c:"c.27dupG", hgvs_p:"p.(Ser10fs)", location:"Exon 1", mechanism:"Frameshift insertion", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Classic Asian-Indian founder mutation.", phenotype:"Homozygous → thalassemia major.", confidence:"confirmed" },
+    { id:"cd44", name:"Cd44 (−C)", legacy:"Frameshift codon 44", hgvs_c:"c.135delC", hgvs_p:"p.(Phe46Serfs)", location:"Exon 2", mechanism:"Frameshift deletion", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Kurdish-Jewish founder mutation, very high frequency in that group.", phenotype:"Homozygous → thalassemia major.", confidence:"confirmed" },
+    { id:"cd7172", name:"Cd71/72 (+T)", legacy:"Frameshift codon 71/72 insertion", hgvs_c:"c.217dup", hgvs_p:"p.(Ser73fs)", location:"Exon 2", mechanism:"Frameshift insertion", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Chinese founder mutation.", phenotype:"Homozygous → thalassemia major.", confidence:"confirmed" },
+    { id:"cd8283", name:"Cd82/83 (−G)", legacy:"Frameshift codon 82/83", hgvs_c:"c.251delG", hgvs_p:"p.(Gly84Argfs)", location:"Exon 2", mechanism:"Frameshift deletion", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Reported in Indian / Asian populations.", phenotype:"Homozygous → thalassemia major.", confidence:"confirmed" },
+    { id:"cd121ter", name:"Cd121 (GAG>TAG)", legacy:"Codon 121 nonsense", hgvs_c:"c.364G>T", hgvs_p:"p.(Glu122Ter)", location:"Exon 3", mechanism:"Nonsense", cls:"beta0", group:"beta0", significance:"Pathogenic (dominant β-thal reported)", population:"Reported sporadically, Mediterranean.", phenotype:"Homozygous → thalassemia major; heterozygous forms have also been reported with a dominant inclusion-body thalassemia phenotype in the literature — flag for specialist review if seen in a single dose with unexplained anemia.", confidence:"confirmed" },
+    { id:"initcodon", name:"Initiation codon loss (ATG>AGG or similar)", legacy:"Cd1 initiator Met loss", hgvs_c:"c.1A>G (allele-specific — several distinct start-codon changes reported)", hgvs_p:"p.Met1?", location:"Exon 1 (start codon)", mechanism:"Initiation-codon loss", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Rare globally; several distinct alleles reported.", phenotype:"Homozygous → thalassemia major. Confirm exact base change locally — several non-equivalent start-codon variants exist under this legacy name.", confidence:"reported" },
+    { id:"largedel", name:"Large HBB gene / cluster deletions", legacy:"Various (breakpoints allele-specific)", hgvs_c:"No fixed HGVS — requires MLPA / gap-PCR to define breakpoints", hgvs_p:"—", location:"Whole gene / locus control region", mechanism:"Large deletion", cls:"beta0", group:"beta0", significance:"Pathogenic", population:"Documented in Moroccan / North African MLPA-based studies.", phenotype:"Behaves as β⁰. Thalassemia major/intermedia depending on partner allele.", confidence:"reported" },
+
+    // ---------------- β+-thalassemia ----------------
+    { id:"ivsi110", name:"IVS-I-110 (G>A)", legacy:"Classic Mediterranean β⁺ founder", hgvs_c:"c.93-21G>A", hgvs_p:"—", location:"Intron 1", mechanism:"Minor splice-site activation (cryptic acceptor)", cls:"bplus_severe", group:"bplus", significance:"Pathogenic", population:"Moroccan (≈5.7%); extremely common across the Mediterranean and Lebanon.", phenotype:"Severely reduced β output — clinically often behaves like β⁰. Thalassemia intermedia/major depending on partner allele.", confidence:"confirmed" },
+    { id:"ivsii745", name:"IVS-II-745 (C>T)", legacy:"3rd most common Moroccan allele", hgvs_c:"c.316-197C>T", hgvs_p:"—", location:"Intron 2", mechanism:"Minor splice-site activation", cls:"bplus_severe", group:"bplus", significance:"Pathogenic", population:"Moroccan (≈7.6%, 3rd most common); common Mediterranean.", phenotype:"Severe reduction — thalassemia intermedia/major depending on partner allele.", confidence:"confirmed" },
+    { id:"ivsi6", name:"IVS-I-6 (T>C)", legacy:"Mild splice-donor weakening", hgvs_c:"c.92+6T>C", hgvs_p:"—", location:"Intron 1", mechanism:"Minor splice-site weakening (mild)", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"Moroccan (≈3.16%); very common Mediterranean, often mild thalassemia intermedia.", phenotype:"Homozygous → mild thalassemia intermedia.", confidence:"confirmed" },
+    { id:"cd29", name:"Cd29 (A>G)", legacy:"4th most common Moroccan allele", hgvs_c:"Verify locally against current HbVar/ClinVar", hgvs_p:"—", location:"Exon 2 / splice region", mechanism:"Splice-related", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"Moroccan (≈6.33%, 4th most common — Agouti 2008).", phenotype:"Thalassemia intermedia.", confidence:"reported" },
+    { id:"cd28", name:"Cd28 (A>C)", legacy:"—", hgvs_c:"Verify locally against current HbVar/ClinVar", hgvs_p:"—", location:"Exon 1/2", mechanism:"β⁺ mechanism (HbVar)", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"Moroccan (≈1.9%).", phenotype:"Mild-moderate thalassemia.", confidence:"reported" },
+    { id:"cd24", name:"Cd24 (T>A)", legacy:"—", hgvs_c:"Verify locally against current HbVar/ClinVar", hgvs_p:"—", location:"Exon 1", mechanism:"Splice modifier (mild)", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"Moroccan (≈0.63%).", phenotype:"Mild thalassemia.", confidence:"reported" },
+    { id:"m87", name:"−87 (C>G)", legacy:"Promoter, CCAAT-box region", hgvs_c:"c.-137C>G", hgvs_p:"—", location:"5′ promoter", mechanism:"Promoter (reduced transcription)", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"Well documented Mediterranean.", phenotype:"Mild thalassemia intermedia.", confidence:"confirmed" },
+    { id:"m88", name:"−88 (C>T)", legacy:"Promoter", hgvs_c:"c.-138C>T", hgvs_p:"—", location:"5′ promoter", mechanism:"Promoter (reduced transcription)", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"African-American / Mediterranean common promoter allele.", phenotype:"Mild thalassemia.", confidence:"confirmed" },
+    { id:"m29", name:"−29 (A>G)", legacy:"Promoter, TATA-proximal", hgvs_c:"c.-79A>G", hgvs_p:"—", location:"5′ promoter", mechanism:"Promoter", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"Common in African / African-American populations; also Mediterranean.", phenotype:"Mild thalassemia intermedia, often near-silent in heterozygote.", confidence:"confirmed" },
+    { id:"m28", name:"−28 (A>G)", legacy:"Promoter, TATA box", hgvs_c:"c.-78A>G", hgvs_p:"—", location:"5′ promoter", mechanism:"Promoter (larger reduction)", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"Common Southeast Asian / Chinese; reported Mediterranean / Middle East.", phenotype:"Thalassemia intermedia.", confidence:"confirmed" },
+    { id:"m101", name:"−101 (C>T)", legacy:"Very mild upstream promoter", hgvs_c:"c.-151C>T", hgvs_p:"—", location:"5′ promoter", mechanism:"Promoter (very mild reduction)", cls:"bplus_silent", group:"bplus", significance:"Pathogenic (mild)", population:"Mediterranean, notably Sicily/Sardinia; ameliorates a co-inherited β⁰ allele.", phenotype:"Near-silent carrier phenotype alone; softens severity when compound with β⁰.", confidence:"confirmed" },
+    { id:"polya113", name:"Poly-A signal, c.*113A>G", legacy:"AATAAA>AATAAG", hgvs_c:"c.*113A>G", hgvs_p:"—", location:"3′UTR", mechanism:"Poly-A signal, impaired mRNA cleavage", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"Reported Mediterranean / Asian-Indian.", phenotype:"Moderate thalassemia intermedia in compound het.", confidence:"confirmed" },
+    { id:"polyadel", name:"Poly-A signal deletion, c.*110_*114del", legacy:"AATAAA deletion", hgvs_c:"c.*110_*114del", hgvs_p:"—", location:"3′UTR", mechanism:"Poly-A signal deletion", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"Reported globally, incl. Mediterranean.", phenotype:"Moderate thalassemia.", confidence:"confirmed" },
+    { id:"polya110c", name:"Poly-A signal, c.*110T>C", legacy:"—", hgvs_c:"c.*110T>C", hgvs_p:"—", location:"3′UTR", mechanism:"Poly-A signal", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"Mediterranean.", phenotype:"Moderate thalassemia.", confidence:"confirmed" },
+    { id:"polya110a", name:"Poly-A signal, c.*110T>A", legacy:"—", hgvs_c:"c.*110T>A", hgvs_p:"—", location:"3′UTR", mechanism:"Poly-A signal", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"Reported Mediterranean / Middle East.", phenotype:"Moderate thalassemia.", confidence:"confirmed" },
+    { id:"cap1", name:"Cap+1 (A>C)", legacy:"5′ cap-site variant", hgvs_c:"c.-50A>C", hgvs_p:"—", location:"5′UTR", mechanism:"Transcription / cap-site", cls:"bplus_silent", group:"bplus", significance:"Reported pathogenic in specific compound combinations", population:"Reported in a Syrian family alongside Cd5(−CT).", phenotype:"Very mild alone; contributes to phenotype mainly in combination with a stronger allele.", confidence:"reported" },
+    { id:"ivsi5", name:"IVS-I-5 (G>…)", legacy:"Minor splice donor", hgvs_c:"Verify locally against current HbVar/ClinVar", hgvs_p:"—", location:"Intron 1", mechanism:"Minor splice-site", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"Reported Mediterranean / Asian-Indian.", phenotype:"Thalassemia intermedia.", confidence:"reported" },
+    { id:"cd27knossos", name:"Cd27, Hb Knossos", legacy:"GCC>TCC", hgvs_c:"c.82G>T", hgvs_p:"p.(Ala28Ser)", location:"Exon 1", mechanism:"Missense + activates a cryptic splice site (dual mechanism)", cls:"bplus_mild", group:"bplus", significance:"Pathogenic", population:"Greek origin, also reported in North Africa.", phenotype:"Mild thalassemia intermedia; the Hb Knossos variant itself is electrophoretically near-silent.", confidence:"confirmed" },
+
+    // ---------------- Structural variants ----------------
+    { id:"hbs", name:"HbS", legacy:"Cd6(A>T), Glu6Val", hgvs_c:"c.20A>T", hgvs_p:"p.(Glu7Val)", location:"Exon 1", mechanism:"Missense — causes polymerization/sickling", cls:"hbS", group:"structural", significance:"Pathogenic", population:"Present in Morocco (lower frequency than Sub-Saharan Africa; higher carrier rates reported in southern/Saharan populations).", phenotype:"Homozygous SS → sickle cell disease. Compound het with β⁰-thal → severe sickling; with β⁺-thal → milder.", confidence:"confirmed" },
+    { id:"hbc", name:"HbC", legacy:"Cd6(G>A), Glu6Lys", hgvs_c:"c.19G>A", hgvs_p:"p.(Glu7Lys)", location:"Exon 1", mechanism:"Missense", cls:"hbC", group:"structural", significance:"Pathogenic / established variant", population:"Rare in Morocco; more common West African. Relevant with Sub-Saharan ancestry.", phenotype:"Homozygous CC → mild hemolytic anemia with target cells. HbSC (with HbS) → moderate sickling disorder.", confidence:"confirmed" },
+    { id:"hbe", name:"HbE", legacy:"Cd26(G>A), Glu26Lys", hgvs_c:"c.79G>A", hgvs_p:"p.(Glu27Lys)", location:"Exon 1", mechanism:"Missense, also creates a cryptic splice site (dual structural/mild β⁺ mechanism)", cls:"hbE", group:"structural", significance:"Pathogenic / established variant", population:"Uncommon in Morocco; important with Southeast Asian ancestry — globally one of the most common Hb variants.", phenotype:"Homozygous EE → usually mild, asymptomatic microcytic anemia. HbE/β-thal → thalassemia intermedia to major, highly variable.", confidence:"reported" },
+    { id:"hbd", name:"Hb D-Punjab (Los Angeles)", legacy:"Cd121(G>C), Glu121Gln", hgvs_c:"c.364G>C", hgvs_p:"p.(Glu122Gln)", location:"Exon 3", mechanism:"Missense", cls:"hbD", group:"structural", significance:"Pathogenic / established variant", population:"Reported North African / Mediterranean and South Asian populations.", phenotype:"Homozygous DD → mild hemolytic anemia. HbS/D-Punjab compound het → clinically significant sickling disorder.", confidence:"confirmed" },
+    { id:"hbo", name:"Hb O-Arab", legacy:"Cd121(G>A), Glu121Lys", hgvs_c:"c.364G>A", hgvs_p:"p.(Glu122Lys)", location:"Exon 3", mechanism:"Missense", cls:"hbO", group:"structural", significance:"Pathogenic / established variant", population:"Documented North Africa / Middle East and among African-Americans.", phenotype:"Homozygous OO → mild-moderate hemolytic anemia. HbS/O-Arab compound het → severe sickling, often as severe as HbSS — important to distinguish from HbD on electrophoresis.", confidence:"confirmed" },
+    { id:"charlem", name:"Hb C-Harlem (Georgetown)", legacy:"Cd6(Glu>Val)+Cd73(Asp>Asn), cis double mutant", hgvs_c:"c.20A>T + c.220G>A on the same allele (verify second-site notation locally)", hgvs_p:"p.(Glu7Val; Asp74Asn)", location:"Exon 1 + Exon 2", mechanism:"Double missense on one chromosome (structural)", cls:"struct_other", group:"structural", significance:"Pathogenic / established (rare)", population:"Very rare, historically African-American.", phenotype:"Behaves like a variant HbS — can cause sickling. Compound het with true HbS → sickling syndrome.", confidence:"reported" },
+    { id:"lepore", name:"Hb Lepore (Boston-Washington)", legacy:"δβ-fusion", hgvs_c:"Large δβ-fusion deletion — breakpoints require MLPA/gap-PCR to resolve precisely", hgvs_p:"δβ fusion protein (no normal β from this allele)", location:"Spans HBD–HBB", mechanism:"Fusion gene / structural deletion, reduced production of Lepore hemoglobin (behaves like β⁺)", cls:"lepore", group:"structural", significance:"Pathogenic", population:"Reported Mediterranean (Italy, Greece), sporadically North Africa.", phenotype:"Homozygous → thalassemia intermedia/major. Compound het with β⁰ → severe thalassemia. Not detectable by point-mutation Sanger sequencing — needs MLPA/breakpoint PCR.", confidence:"confirmed" },
+
+    // ---------------- HPFH / δβ modifiers (informational — not directly Sanger-callable on HBB alone) ----------------
+    { id:"hpfhdel", name:"Deletional HPFH (various subtypes)", legacy:"HPFH-1/2/3, Sicilian δβ-thal", hgvs_c:"Large deletions spanning HBD–HBB — subtype-specific breakpoints", hgvs_p:"—", location:"HBD–HBB gene cluster", mechanism:"Large deletion removing δ and β genes, juxtaposing γ genes to enhancers → persistent γ expression", cls:"info", group:"hpfh", significance:"Benign / ameliorating (not itself disease-causing)", population:"Documented in Mediterranean populations (e.g. Sicilian δβ⁰-thal).", phenotype:"Homozygous → mild/no anemia, high pancellular HbF (15–30%). Compound het with β⁰-thal → masks/ameliorates the expected severity. Not resolvable by HBB point-mutation Sanger sequencing — consider reflex MLPA if HbF is elevated with no HBB pathogenic variant found.", confidence:"reported", selectable:false },
+    { id:"xmn1", name:"Xmn1-HBG2 site (Aγ −158, C>T)", legacy:"Xmn1 polymorphism", hgvs_c:"HBG2 promoter (not HBB) — commonly reported alongside HBB panels", hgvs_p:"—", location:"HBG2 promoter, upstream of HBB", mechanism:"Enhances Aγ expression; modifier, not disease-causing", cls:"info", group:"hpfh", significance:"Benign modifier", population:"Very common globally, frequent in Mediterranean / African populations.", phenotype:"No disease alone; ameliorates β-thal severity when co-inherited. Outside the HBB gene itself.", confidence:"reported", selectable:false },
+    { id:"nondelhpfh", name:"Non-deletional HPFH (HBG1/HBG2 promoter variants)", legacy:"Aγ −202, Aγ −175, Gγ −158 Greek, Gγ −114 Corfu-related, British, Georgia types", hgvs_c:"HBG1/HBG2 region — not HBB", hgvs_p:"—", location:"HBG1/HBG2 promoters", mechanism:"Promoter — increased γ-globin transcription", cls:"info", group:"hpfh", significance:"Benign / ameliorating", population:"Reported worldwide incl. Mediterranean/Middle East.", phenotype:"Isolated: elevated HbF, no anemia. Ameliorates β-thal phenotype when co-inherited. Out of scope for an HBB-only Sanger panel.", confidence:"reported", selectable:false },
+    { id:"corfu", name:"Corfu δβ-thalassemia", legacy:"Deletion + linked IVS-I-5 point mutation", hgvs_c:"Complex allele — deletion plus linked point mutation, HbVar-specific breakpoints", hgvs_p:"—", location:"HBD–HBB region", mechanism:"Deletion + point mutation combination", cls:"info", group:"hpfh", significance:"Pathogenic (thalassemia-like)", population:"Mediterranean (Greek islands), occasionally reported wider Mediterranean.", phenotype:"Generally thalassemia intermedia in compound heterozygous states. Not resolvable by HBB point-mutation Sanger alone.", confidence:"reported", selectable:false },
+
+    // ---------------- Silent / benign polymorphisms ----------------
+    { id:"ivsii666", name:"IVS-II-666 (C>T)", legacy:"Deep intronic SNP", hgvs_c:"c.316-185C>T", hgvs_p:"—", location:"Intron 2", mechanism:"Deep intronic SNP", cls:"benign", group:"benign", significance:"Benign (predominant consensus; some literature notes a possible modifying effect in trans with HbS/β⁺ — do not over-simplify to 'always silent')", population:"Reported widely, incl. Mediterranean and Southeast Asia.", phenotype:"No independent clinical effect in most reports.", confidence:"confirmed" },
+    { id:"ivsii16", name:"IVS-II-16 (G>C)", legacy:"Deep intronic SNP", hgvs_c:"c.315+16G>C", hgvs_p:"—", location:"Intron 2", mechanism:"Deep intronic SNP", cls:"benign", group:"benign", significance:"Benign (same caution as IVS-II-666 — reported co-occurring with HbS/β⁺ in case reports, likely a linked SNP rather than a primary driver)", population:"Reported globally.", phenotype:"Generally no independent clinical effect.", confidence:"confirmed" },
+    { id:"cd2", name:"Cd2 (GTG>GTC)", legacy:"Synonymous", hgvs_c:"c.6G>C", hgvs_p:"p.(Val2=)", location:"Exon 1", mechanism:"Synonymous", cls:"benign", group:"benign", significance:"Benign", population:"Reported in multiple populations incl. Mediterranean.", phenotype:"No amino-acid change, no clinical effect.", confidence:"reported" },
+    { id:"cd9", name:"Cd9 (GCC>GCA)", legacy:"Synonymous", hgvs_c:"c.27C>A", hgvs_p:"p.(Ala9=)", location:"Exon 1", mechanism:"Synonymous", cls:"benign", group:"benign", significance:"Benign", population:"HbVar-documented.", phenotype:"No clinical effect.", confidence:"reported" },
+    { id:"cd12", name:"Cd12 (GTG>GTA)", legacy:"Synonymous", hgvs_c:"c.36G>A", hgvs_p:"p.(Val12=)", location:"Exon 1", mechanism:"Synonymous", cls:"benign", group:"benign", significance:"Benign", population:"HbVar-documented.", phenotype:"No clinical effect.", confidence:"reported" },
+    { id:"m551", name:"−551 (C>G)", legacy:"Far-upstream promoter SNP", hgvs_c:"Verify locally against current HbVar/ClinVar", hgvs_p:"—", location:"5′ far-upstream promoter", mechanism:"Promoter SNP", cls:"benign", group:"benign", significance:"Benign", population:"Reported in general population screens.", phenotype:"No significant transcriptional effect reported.", confidence:"reported", selectable:false },
+    { id:"utr3generic", name:"Common 3′UTR SNPs (non poly-A-signal)", legacy:"Various rs IDs", hgvs_c:"Outside the AATAAA hexamer — position varies by SNP", hgvs_p:"—", location:"3′UTR", mechanism:"Non-coding SNP", cls:"benign", group:"benign", significance:"Benign", population:"Common in the general population.", phenotype:"No clinical effect — distinguish carefully from the pathogenic poly-A-signal variants above.", confidence:"reported", selectable:false },
+    { id:"utr5generic", name:"Common 5′UTR SNPs (outside cap/Kozak region)", legacy:"Various rs IDs", hgvs_c:"Position varies by SNP", hgvs_p:"—", location:"5′UTR", mechanism:"Non-coding SNP", cls:"benign", group:"benign", significance:"Benign", population:"Common in the general population.", phenotype:"No clinical effect.", confidence:"reported", selectable:false }
+  ];
+
+  VARIANTS.forEach(function (v) { if (v.selectable === undefined) v.selectable = true; });
+  var ALL_ALLELES = [NORMAL_ALLELE].concat(VARIANTS);
+  var SELECTABLE_ALLELES = ALL_ALLELES.filter(function (v) { return v.selectable; });
+
+  /* ============================================================
+     2. GENOTYPE COMBINER LOGIC
+  ============================================================ */
+  var THAL_TIER = { beta0: 3, bplus_severe: 2, bplus_mild: 1, bplus_silent: 0 };
+  var THAL_LABEL = { beta0: "β⁰", bplus_severe: "severe β⁺", bplus_mild: "mild β⁺", bplus_silent: "silent β⁺" };
+
+  var THAL_THAL_MATRIX = {
+    "3-3": { sev:"severe", title:"Beta-thalassemia major", text:"Two β⁰ alleles — no functional β-globin is produced from either. Transfusion-dependent thalassemia major is expected." },
+    "3-2": { sev:"severe", title:"Beta-thalassemia major / severe intermedia", text:"β⁰ paired with a severe β⁺ allele — clinically usually behaves as thalassemia major, occasionally severe intermedia." },
+    "3-1": { sev:"moderate", title:"Beta-thalassemia intermedia", text:"β⁰ paired with a mild β⁺ allele — residual β-globin production from the mild allele typically produces thalassemia intermedia rather than major, though transfusion dependence is possible." },
+    "3-0": { sev:"moderate", title:"Beta-thalassemia intermedia (often mild)", text:"β⁰ paired with a silent/very-mild β⁺ allele — the silent allele's residual output usually softens severity toward mild-to-moderate intermedia." },
+    "2-2": { sev:"severe", title:"Beta-thalassemia major / severe intermedia", text:"Two severe β⁺ alleles — combined output is low enough to frequently produce a major/severe-intermedia phenotype." },
+    "2-1": { sev:"moderate", title:"Beta-thalassemia intermedia", text:"Severe β⁺ paired with mild β⁺ — intermedia is the expected phenotype." },
+    "2-0": { sev:"moderate", title:"Beta-thalassemia intermedia (mild)", text:"Severe β⁺ paired with a silent/very-mild allele — generally mild-to-moderate intermedia." },
+    "1-1": { sev:"moderate", title:"Beta-thalassemia intermedia (mild) / minor", text:"Two mild β⁺ alleles — usually mild thalassemia intermedia, sometimes closer to a symptomatic trait." },
+    "1-0": { sev:"carrier", title:"Beta-thalassemia minor / mild trait", text:"Mild β⁺ paired with a silent allele — often close to a carrier phenotype with mild microcytosis." },
+    "0-0": { sev:"carrier", title:"Silent carrier state", text:"Two silent/very-mild β⁺ alleles — usually clinically silent or minimally microcytic." }
+  };
+
+  function thalKey(a, b) {
+    var t1 = THAL_TIER[a], t2 = THAL_TIER[b];
+    var hi = Math.max(t1, t2), lo = Math.min(t1, t2);
+    return hi + "-" + lo;
+  }
+
+  var CARRIER_TEXT = {
+    beta0:        { sev:"carrier", title:"Beta-thalassemia trait (carrier)", text:"Heterozygous for a β⁰ allele. Usually clinically silent to mildly microcytic (low MCV/MCH, normal-to-mildly-low Hb). Reproductive counseling is relevant if the partner is also a carrier." },
+    bplus_severe: { sev:"carrier", title:"Beta-thalassemia trait (carrier)", text:"Heterozygous for a severe β⁺ allele. Usually clinically silent to mildly microcytic. Reproductive counseling is relevant." },
+    bplus_mild:   { sev:"carrier", title:"Beta-thalassemia trait (carrier)", text:"Heterozygous for a mild β⁺ allele. Typically clinically silent with mild microcytosis. Reproductive counseling is relevant." },
+    bplus_silent: { sev:"carrier", title:"Silent beta-thalassemia carrier", text:"Heterozygous for a very mild/silent β⁺ allele. Typically normal or near-normal hematology; minimal clinical relevance alone, but can unmask more severe disease if paired with a stronger allele in offspring." },
+    hbS:          { sev:"carrier", title:"Sickle cell trait (HbAS)", text:"Heterozygous carrier of HbS. Generally asymptomatic. Relevant for reproductive counseling, and in specific contexts (extreme exertion, high altitude, hypoxia, some anesthesia protocols)." },
+    hbC:          { sev:"carrier", title:"HbC trait (HbAC)", text:"Heterozygous carrier of HbC. Asymptomatic." },
+    hbE:          { sev:"carrier", title:"HbE trait (HbAE)", text:"Heterozygous carrier of HbE. Asymptomatic, may show mild microcytosis." },
+    hbD:          { sev:"carrier", title:"Hb D-Punjab trait", text:"Heterozygous carrier. Asymptomatic." },
+    hbO:          { sev:"carrier", title:"Hb O-Arab trait", text:"Heterozygous carrier. Asymptomatic." },
+    lepore:       { sev:"carrier", title:"Hb Lepore trait", text:"Heterozygous carrier. Mild or no hematologic changes; behaves as a mild β-thalassemia-like carrier state." },
+    struct_other: { sev:"review", title:"Rare structural variant, heterozygous", text:"Heterozygous for a rare structural variant. Generally benign alone, but relevant for compound-heterozygosity risk with a partner's HbS or thalassemia allele — specialist correlation recommended." },
+    benign:       { sev:"benign", title:"No clinically significant finding", text:"This allele is a benign polymorphism. Combined with a normal second allele, no HBB-related disease is expected." },
+    info:         { sev:"review", title:"Modifier variant — not a primary HBB finding", text:"This entry is an informational modifier (HPFH/δβ-region), not a standard Sanger-callable HBB point variant. Interpret alongside HbF level and, if elevated, consider reflex MLPA/HPFH testing." }
+  };
+
+  var STRUCT_LABEL = { hbS: "HbS", hbC: "HbC", hbE: "HbE", hbD: "Hb D-Punjab", hbO: "Hb O-Arab", lepore: "Hb Lepore", struct_other: "this rare structural variant" };
+
+  var STRUCT_HOMOZYGOUS = {
+    hbS: { sev:"severe", title:"Sickle cell disease (drépanocytose homozygote, SS)", text:"Homozygous HbS. Sickle cell disease — vaso-occlusive crises, chronic hemolysis, increased infection risk. Confirm with hemoglobin electrophoresis/HPLC and clinical correlation; this is a major diagnosis requiring comprehensive care." },
+    hbC: { sev:"moderate", title:"Hemoglobin C disease", text:"Homozygous HbC. Mild chronic hemolytic anemia with target cells and splenomegaly; generally a mild, manageable condition." },
+    hbE: { sev:"carrier", title:"Homozygous HbE", text:"Usually mild, often asymptomatic microcytic anemia. Distinguish from HbE/β-thalassemia, which is clinically far more significant." },
+    hbD: { sev:"moderate", title:"Homozygous Hb D-Punjab", text:"Mild hemolytic anemia, usually well tolerated." },
+    hbO: { sev:"moderate", title:"Homozygous Hb O-Arab", text:"Mild-to-moderate hemolytic anemia." },
+    lepore: { sev:"moderate", title:"Homozygous Hb Lepore", text:"Thalassemia intermedia to major spectrum — the Lepore allele produces very little functional hemoglobin from either chromosome." },
+    struct_other: { sev:"review", title:"Homozygous rare structural variant", text:"Very rare homozygous state — specialist literature review recommended before interpretation." }
+  };
+
+  // Structural × thalassemia-tier bespoke text, keyed "structClass|thalTier"
+  var STRUCT_THAL = {
+    "hbS|3": { sev:"severe", title:"Sickle cell / β⁰-thalassemia (Sβ⁰)", text:"HbS with a β⁰ allele on the other chromosome — no normal β-globin is produced from the non-S allele, so HbS dominates. Clinically resembles sickle cell disease and is often equally severe." },
+    "hbS|2": { sev:"severe", title:"Sickle cell / β⁺-thalassemia, severe subtype (Sβ⁺)", text:"HbS with a severe β⁺ allele. Clinically significant sickling disorder, generally moderate-to-severe — less HbA is produced from the β⁺ side, so HbS still predominates." },
+    "hbS|1": { sev:"moderate", title:"Sickle cell / β⁺-thalassemia, mild subtype (Sβ⁺)", text:"HbS with a mild β⁺ allele. Some normal HbA is still produced, generally giving a milder sickling phenotype than SS or Sβ⁰." },
+    "hbS|0": { sev:"moderate", title:"Sickle cell / β⁺-thalassemia, mild subtype (Sβ⁺)", text:"HbS with a silent/very-mild β⁺ allele. Meaningful HbA output is usually preserved, typically producing a milder sickling phenotype." },
+    "hbC|3": { sev:"moderate", title:"HbC / β⁰-thalassemia", text:"Mild-to-moderate microcytic hemolytic anemia with target cells; generally milder than sickle syndromes." },
+    "hbC|2": { sev:"moderate", title:"HbC / β⁺-thalassemia (severe subtype)", text:"Mild-to-moderate microcytic hemolytic anemia." },
+    "hbC|1": { sev:"carrier", title:"HbC / β⁺-thalassemia (mild subtype)", text:"Usually mild; often close to a carrier-like presentation." },
+    "hbC|0": { sev:"carrier", title:"HbC / β⁺-thalassemia (mild subtype)", text:"Usually mild, near carrier-like." },
+    "hbE|3": { sev:"severe", title:"HbE / β⁰-thalassemia", text:"One of the most common severe thalassemia syndromes worldwide. Ranges from moderate thalassemia intermedia to transfusion-dependent thalassemia major — highly variable, influenced by co-inherited modifiers (α-globin genotype, HbF-promoting variants)." },
+    "hbE|2": { sev:"severe", title:"HbE / β⁺-thalassemia (severe subtype)", text:"Thalassemia intermedia to major spectrum; variable severity." },
+    "hbE|1": { sev:"moderate", title:"HbE / β⁺-thalassemia (mild subtype)", text:"Generally mild-to-moderate thalassemia intermedia." },
+    "hbE|0": { sev:"moderate", title:"HbE / β⁺-thalassemia (mild subtype)", text:"Generally mild; monitor for evolving intermedia phenotype." },
+    "hbD|3": { sev:"moderate", title:"Hb D-Punjab / β⁰-thalassemia", text:"Generally mild-to-moderate anemia; D-Punjab itself does not sickle, so this is milder than an S-containing compound genotype. Distinguish D-Punjab from HbS on electrophoresis/HPLC — they can co-migrate on some platforms." },
+    "hbD|2": { sev:"moderate", title:"Hb D-Punjab / β⁺-thalassemia (severe subtype)", text:"Generally mild-to-moderate." },
+    "hbD|1": { sev:"carrier", title:"Hb D-Punjab / β⁺-thalassemia (mild subtype)", text:"Generally mild, close to carrier-like." },
+    "hbD|0": { sev:"carrier", title:"Hb D-Punjab / β⁺-thalassemia (mild subtype)", text:"Generally mild." },
+    "hbO|3": { sev:"moderate", title:"Hb O-Arab / β⁰-thalassemia", text:"Generally mild-to-moderate hemolytic anemia; monitor clinically." },
+    "hbO|2": { sev:"moderate", title:"Hb O-Arab / β⁺-thalassemia (severe subtype)", text:"Generally mild-to-moderate." },
+    "hbO|1": { sev:"carrier", title:"Hb O-Arab / β⁺-thalassemia (mild subtype)", text:"Generally mild." },
+    "hbO|0": { sev:"carrier", title:"Hb O-Arab / β⁺-thalassemia (mild subtype)", text:"Generally mild." },
+    "lepore|3": { sev:"severe", title:"Hb Lepore / β⁰-thalassemia", text:"Thalassemia intermedia to major — the Lepore allele contributes very little functional hemoglobin, so this behaves similarly to β⁰/β⁰." },
+    "lepore|2": { sev:"moderate", title:"Hb Lepore / β⁺-thalassemia (severe subtype)", text:"Thalassemia intermedia." },
+    "lepore|1": { sev:"moderate", title:"Hb Lepore / β⁺-thalassemia (mild subtype)", text:"Thalassemia intermedia, generally milder." },
+    "lepore|0": { sev:"moderate", title:"Hb Lepore / β⁺-thalassemia (mild subtype)", text:"Generally milder intermedia." }
+  };
+
+  var STRUCT_STRUCT = {
+    "hbC-hbS": { sev:"severe", title:"HbSC disease", text:"Compound heterozygous HbS/HbC. A distinct, moderate-to-severe sickling disorder — clinically different from HbSS, with its own complication profile (notably higher risk of retinopathy and avascular necrosis, generally fewer painful crises than SS)." },
+    "hbD-hbS": { sev:"severe", title:"Hb S / D-Punjab", text:"Clinically significant sickling disorder — HbD-Punjab co-inherited with HbS can produce a phenotype resembling sickle cell disease. Confirm both variants precisely; D-Punjab and HbS can be difficult to separate on some electrophoresis platforms." },
+    "hbO-hbS": { sev:"severe", title:"Hb S / O-Arab", text:"Severe sickling disorder — often as severe as homozygous SS. Important to distinguish HbO-Arab from HbD on HPLC/electrophoresis, since the clinical implications differ substantially from a benign HbD-Punjab trait pairing." },
+    "hbS-lepore": { sev:"severe", title:"Hb S / Lepore", text:"Sickling disorder of variable severity — the Lepore allele contributes little normal β-globin, so this behaves similarly to Sβ-thalassemia." },
+    "hbS-struct_other": { sev:"review", title:"HbS with a rare structural variant", text:"Potential sickling interaction depending on the partner variant's structural effect. Specialist review recommended." },
+    "hbC-hbE": { sev:"carrier", title:"HbC / HbE double heterozygote", text:"Rare combination; generally mild phenotype expected. Specialist correlation recommended." },
+    "hbC-hbD": { sev:"carrier", title:"HbC / Hb D-Punjab double heterozygote", text:"Rare combination; generally mild. Specialist correlation recommended." },
+    "hbC-hbO": { sev:"carrier", title:"HbC / Hb O-Arab double heterozygote", text:"Rare combination; generally mild. Specialist correlation recommended." },
+    "hbD-hbE": { sev:"carrier", title:"HbE / Hb D-Punjab double heterozygote", text:"Rare combination; generally mild. Specialist correlation recommended." },
+    "hbE-hbO": { sev:"carrier", title:"HbE / Hb O-Arab double heterozygote", text:"Rare combination; generally mild. Specialist correlation recommended." },
+    "hbD-hbO": { sev:"carrier", title:"Hb D-Punjab / Hb O-Arab double heterozygote", text:"Rare combination; generally mild. Specialist correlation recommended." }
+  };
+
+  function severityMeta(sev) {
+    var map = {
+      benign:   { color:"var(--sev-benign)", soft:"var(--sev-benign-soft)", label:"No disease / benign" },
+      carrier:  { color:"var(--sev-carrier)", soft:"var(--sev-carrier-soft)", label:"Carrier / trait — usually asymptomatic" },
+      moderate: { color:"var(--sev-moderate)", soft:"var(--sev-moderate-soft)", label:"Mild–moderate disease" },
+      severe:   { color:"var(--sev-severe)", soft:"var(--sev-severe-soft)", label:"Significant / severe disease" },
+      review:   { color:"var(--sev-review)", soft:"var(--sev-review-soft)", label:"Rare — specialist review" }
+    };
+    return map[sev] || map.review;
+  }
+
+  function isThal(cls) { return THAL_TIER.hasOwnProperty(cls); }
+  function isStruct(cls) { return ["hbS","hbC","hbE","hbD","hbO","lepore","struct_other"].indexOf(cls) !== -1; }
+
+  function interpret(v1, v2) {
+    var inactive = ["normal", "benign", "info"];
+    var a1active = inactive.indexOf(v1.cls) === -1;
+    var a2active = inactive.indexOf(v2.cls) === -1;
+
+    var flags = [];
+    if (v1.cls === "info" || v2.cls === "info") {
+      flags.push({ warn:true, text:"One selected entry is a modifier/informational variant outside standard HBB Sanger scope — see its note above." });
+    }
+    if (v1.confidence === "reported" || v2.confidence === "reported") {
+      flags.push({ warn:true, text:"At least one selected allele's HGVS notation is a literature/HbVar consensus call — re-confirm locally before this enters a report." });
+    }
+    var sangerBlind = (v1.cls === "lepore" || v2.cls === "lepore" || v1.id === "largedel" || v2.id === "largedel");
+    if (sangerBlind) {
+      flags.push({ warn:true, text:"This genotype involves a large deletion / fusion allele — not reliably detectable by point-mutation Sanger sequencing alone. Confirm with MLPA or gap-PCR." });
+    }
+
+    // both inactive
+    if (!a1active && !a2active) {
+      return { sev:"benign", title:"No pathogenic HBB variant detected", text:"Both alleles are normal and/or benign polymorphisms. No HBB-related hemoglobinopathy expected from this gene.", flags: flags };
+    }
+    // one active
+    if (a1active !== a2active) {
+      var active = a1active ? v1 : v2;
+      var base = CARRIER_TEXT[active.cls] || CARRIER_TEXT.info;
+      return { sev: base.sev, title: base.title, text: base.text, flags: flags };
+    }
+
+    // both active
+    var bothStruct = isStruct(v1.cls) && isStruct(v2.cls);
+    var bothThal = isThal(v1.cls) && isThal(v2.cls);
+    var oneEach = (isStruct(v1.cls) && isThal(v2.cls)) || (isThal(v1.cls) && isStruct(v2.cls));
+
+    if (bothStruct) {
+      if (v1.cls === v2.cls) {
+        var homo = STRUCT_HOMOZYGOUS[v1.cls];
+        return { sev: homo.sev, title: homo.title, text: homo.text, flags: flags };
+      }
+      var pair = [v1.cls, v2.cls].sort().join("-");
+      var found = STRUCT_STRUCT[pair];
+      if (found) return { sev: found.sev, title: found.title, text: found.text, flags: flags };
+      return { sev:"review", title:"Rare compound structural genotype", text:"Compound heterozygous for two structural variants without a well-established combined phenotype in common references. Specialist literature review strongly recommended.", flags: flags };
+    }
+
+    if (oneEach) {
+      var structV = isStruct(v1.cls) ? v1 : v2;
+      var thalV = isThal(v1.cls) ? v1 : v2;
+      var key = structV.cls + "|" + THAL_TIER[thalV.cls];
+      var st = STRUCT_THAL[key];
+      if (st) return { sev: st.sev, title: st.title, text: st.text, flags: flags };
+      return { sev:"review", title:"Compound structural/thalassemia genotype", text:"Combination not specifically catalogued here — apply general principle: severity scales with how little normal β-globin the thalassemia allele contributes. Specialist review recommended.", flags: flags };
+    }
+
+    if (bothThal) {
+      var k = thalKey(v1.cls, v2.cls);
+      var tm = THAL_THAL_MATRIX[k];
+      return { sev: tm.sev, title: tm.title, text: tm.text, flags: flags };
+    }
+
+    return { sev:"review", title:"Unclassified combination", text:"This genotype combination is not covered by the rule set — please review manually against current literature.", flags: flags };
+  }
+
+  /* ============================================================
+     3. UI — comboboxes
+  ============================================================ */
+  var selection = { 1: null, 2: null };
+
+  function renderComboList(slot, query) {
+    var box = document.querySelector('.combobox[data-slot="' + slot + '"]');
+    var list = box.querySelector(".combo-list");
+    var q = (query || "").trim().toLowerCase();
+    var pool = SELECTABLE_ALLELES;
+    var matches = pool.filter(function (v) {
+      if (!q) return true;
+      return (v.name + " " + v.legacy + " " + v.hgvs_c + " " + (v.hgvs_p||"")).toLowerCase().indexOf(q) !== -1;
+    }).slice(0, 40);
+
+    list.innerHTML = "";
+    if (!matches.length) {
+      var empty = document.createElement("div");
+      empty.className = "combo-empty";
+      empty.textContent = "No matches. Try a legacy name, HGVS c., or protein change.";
+      list.appendChild(empty);
+      return;
+    }
+    var lastGroup = null;
+    matches.forEach(function (v) {
+      var groupLabel = v.id === "normal" ? "Reference" : GROUP_META[v.group];
+      if (groupLabel !== lastGroup) {
+        var gl = document.createElement("div");
+        gl.className = "combo-group-label";
+        gl.textContent = groupLabel;
+        list.appendChild(gl);
+        lastGroup = groupLabel;
+      }
+      var opt = document.createElement("div");
+      opt.className = "combo-option";
+      opt.setAttribute("role", "option");
+      opt.innerHTML = '<span class="co-name">' + escapeHtml(v.name) + '</span><span class="co-hgvs">' + escapeHtml(v.hgvs_c) + '</span>';
+      opt.addEventListener("click", function () { selectAllele(slot, v.id); });
+      list.appendChild(opt);
+    });
+  }
+
+  function selectAllele(slot, id) {
+    var v = ALL_ALLELES.filter(function (x) { return x.id === id; })[0];
+    if (!v) return;
+    selection[slot] = v;
+    var box = document.querySelector('.combobox[data-slot="' + slot + '"]');
+    box.querySelector("input").value = "";
+    box.querySelector(".combo-list").classList.remove("open");
+    renderSelectedPreview(slot);
+  }
+
+  function clearAllele(slot) {
+    selection[slot] = null;
+    var card = document.querySelector('.combobox[data-slot="' + slot + '"]').closest(".allele-card");
+    card.querySelector(".combobox input").value = "";
+    renderSelectedPreview(slot);
+  }
+
+  function renderSelectedPreview(slot) {
+    var card = document.querySelector('.combobox[data-slot="' + slot + '"]').closest(".allele-card");
+    var wrap = card.querySelector(".selected-preview");
+    var v = selection[slot];
+    if (!v) { wrap.innerHTML = ""; return; }
+    var meta = CLASS_META[v.cls];
+    wrap.innerHTML =
+      '<div class="selected-chip">' +
+        '<div class="sc-main">' +
+          '<span class="sc-name">' + escapeHtml(v.name) + '</span>' +
+          '<span class="sc-hgvs">' + escapeHtml(v.hgvs_c) + (v.hgvs_p && v.hgvs_p !== "—" ? " · " + escapeHtml(v.hgvs_p) : "") + '</span>' +
+          '<span class="class-tag" style="background:' + meta.soft + ';color:' + meta.color + '">' + meta.label + '</span>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[c];
+    });
+  }
+
+  [1, 2].forEach(function (slot) {
+    var box = document.querySelector('.combobox[data-slot="' + slot + '"]');
+    var input = box.querySelector("input");
+    var list = box.querySelector(".combo-list");
+    input.addEventListener("focus", function () { renderComboList(slot, input.value); list.classList.add("open"); });
+    input.addEventListener("input", function () { renderComboList(slot, input.value); list.classList.add("open"); });
+    input.addEventListener("keydown", function (e) { if (e.key === "Escape") list.classList.remove("open"); });
+    box.querySelector(".clear-btn").addEventListener("click", function () { clearAllele(slot); });
+    document.addEventListener("click", function (e) {
+      if (!box.contains(e.target)) list.classList.remove("open");
+    });
+  });
+
+  // default both to normal
+  selectAllele(1, "normal");
+  selectAllele(2, "normal");
+
+  document.getElementById("interpret-btn").addEventListener("click", function () {
+    var v1 = selection[1] || NORMAL_ALLELE;
+    var v2 = selection[2] || NORMAL_ALLELE;
+    var result = interpret(v1, v2);
+    renderResult(v1, v2, result);
+  });
+
+  document.getElementById("reset-btn").addEventListener("click", function () {
+    selectAllele(1, "normal");
+    selectAllele(2, "normal");
+    document.getElementById("result-wrap").innerHTML = "";
+  });
+
+  function renderResult(v1, v2, result) {
+    var meta = severityMeta(result.sev);
+    var wrap = document.getElementById("result-wrap");
+    var flagsHtml = (result.flags || []).map(function (f) {
+      return '<span class="flag' + (f.warn ? ' warn' : '') + '"><span aria-hidden="true">' + (f.warn ? "⚠" : "ℹ") + '</span>' + escapeHtml(f.text) + '</span>';
+    }).join("");
+
+    wrap.innerHTML =
+      '<div class="result">' +
+        '<div class="result-stripe" style="background:' + meta.color + '"></div>' +
+        '<div class="result-body">' +
+          '<div class="result-top">' +
+            '<span class="sev-pill" style="background:' + meta.soft + ';color:' + meta.color + '">' + meta.label + '</span>' +
+          '</div>' +
+          '<h3>' + escapeHtml(result.title) + '</h3>' +
+          '<div class="genotype-line">' + escapeHtml(v1.name) + ' (' + escapeHtml(v1.hgvs_c) + ')  ×  ' + escapeHtml(v2.name) + ' (' + escapeHtml(v2.hgvs_c) + ')</div>' +
+          '<div class="result-notes">' +
+            '<div class="note-block"><div class="nb-label">Interpretation</div>' + escapeHtml(result.text) + '</div>' +
+          '</div>' +
+          (flagsHtml ? '<div class="flag-row">' + flagsHtml + '</div>' : '') +
+        '</div>' +
+      '</div>';
+    wrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  /* ============================================================
+     4. Reference browser
+  ============================================================ */
+  var FILTERS = [
+    { key:"all", label:"All variants" },
+    { key:"beta0", label:"β⁰-thalassemia" },
+    { key:"bplus", label:"β⁺-thalassemia" },
+    { key:"structural", label:"Structural" },
+    { key:"hpfh", label:"HPFH / modifiers" },
+    { key:"benign", label:"Benign" }
+  ];
+  var activeFilter = "all";
+  var refQuery = "";
+
+  var filterRow = document.getElementById("filter-row");
+  FILTERS.forEach(function (f) {
+    var btn = document.createElement("button");
+    btn.className = "chip-filter" + (f.key === "all" ? " active" : "");
+    btn.textContent = f.label;
+    btn.addEventListener("click", function () {
+      activeFilter = f.key;
+      Array.prototype.forEach.call(filterRow.children, function (c) { c.classList.remove("active"); });
+      btn.classList.add("active");
+      renderTable();
+    });
+    filterRow.appendChild(btn);
+  });
+
+  document.getElementById("ref-search").addEventListener("input", function (e) {
+    refQuery = e.target.value.trim().toLowerCase();
+    renderTable();
+  });
+
+  var openDetailId = null;
+
+  function renderTable() {
+    var tbody = document.getElementById("variant-tbody");
+    tbody.innerHTML = "";
+    var rows = VARIANTS.filter(function (v) {
+      if (activeFilter !== "all" && v.group !== activeFilter) return false;
+      if (!refQuery) return true;
+      var hay = (v.name + " " + v.legacy + " " + v.hgvs_c + " " + (v.hgvs_p||"") + " " + v.population).toLowerCase();
+      return hay.indexOf(refQuery) !== -1;
+    });
+
+    if (!rows.length) {
+      var tr = document.createElement("tr");
+      tr.innerHTML = '<td colspan="4" style="text-align:center;color:var(--text-faint);padding:28px;">No variants match this filter/search.</td>';
+      tbody.appendChild(tr);
+      return;
+    }
+
+    rows.forEach(function (v) {
+      var meta = CLASS_META[v.cls];
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td class="name">' + escapeHtml(v.name) + '<div style="font-weight:400;color:var(--text-faint);font-size:12px;margin-top:2px;">' + escapeHtml(v.legacy) + '</div></td>' +
+        '<td class="hgvs">' + escapeHtml(v.hgvs_c) + '</td>' +
+        '<td><span class="class-badge" style="background:' + meta.soft + ';color:' + meta.color + '">' + meta.label + '</span></td>' +
+        '<td>' + escapeHtml(v.population) + '</td>';
+      tr.addEventListener("click", function () { toggleDetail(v.id); });
+      tbody.appendChild(tr);
+      if (openDetailId === v.id) tbody.appendChild(buildDetailRow(v));
+    });
+  }
+
+  function buildDetailRow(v) {
+    var confMeta = v.confidence === "confirmed"
+      ? { color:"var(--sev-benign)", label:"Confirmed — ClinVar cross-checked" }
+      : { color:"var(--sev-moderate)", label:"Reported — literature/HbVar consensus, verify locally" };
+    var tr = document.createElement("tr");
+    tr.className = "detail-row";
+    var td = document.createElement("td");
+    td.colSpan = 4;
+    td.innerHTML =
+      '<div class="detail-grid">' +
+        '<div class="detail-field"><div class="df-label">Protein change</div><div class="df-value mono">' + escapeHtml(v.hgvs_p || "—") + '</div></div>' +
+        '<div class="detail-field"><div class="df-label">Location</div><div class="df-value">' + escapeHtml(v.location) + '</div></div>' +
+        '<div class="detail-field"><div class="df-label">Mechanism</div><div class="df-value">' + escapeHtml(v.mechanism) + '</div></div>' +
+        '<div class="detail-field"><div class="df-label">Significance</div><div class="df-value">' + escapeHtml(v.significance) + '</div></div>' +
+        '<div class="detail-field" style="grid-column:1/-1"><div class="df-label">Phenotype</div><div class="df-value">' + escapeHtml(v.phenotype) + '</div></div>' +
+        '<div class="detail-field"><div class="df-label">Sourcing confidence</div><div class="df-value"><span class="conf-dot" style="background:' + confMeta.color + '"></span>' + confMeta.label + '</div></div>' +
+      '</div>';
+    tr.appendChild(td);
+    return tr;
+  }
+
+  function toggleDetail(id) {
+    openDetailId = (openDetailId === id) ? null : id;
+    renderTable();
+  }
+
+  renderTable();
+})();
+</script>
+
+</body></html>
