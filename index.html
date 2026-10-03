@@ -245,6 +245,50 @@
   .tone-severe   { color: var(--sev-severe);   background: var(--sev-severe-soft); }
   .tone-review   { color: var(--sev-review);   background: var(--sev-review-soft); }
 
+  /* ============ Mode tabs ============ */
+  .mode-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .mode-tab {
+    display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06); color: var(--hero-muted);
+    font-weight: 600; font-size: 14.5px; cursor: pointer;
+  }
+  .mode-tab:hover { color: var(--hero-text); background: rgba(255,255,255,.12); }
+  .mode-tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .mode-tab svg { width: 17px; height: 17px; }
+  .topnav a.active { color: var(--hero-text); }
+
+  /* ============ Saisie électrophorèse ============ */
+  .num-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .num { display: block; position: relative; }
+  .num > span { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; }
+  .num input {
+    width: 100%; height: 50px; padding: 0 34px 0 14px; border-radius: 12px; border: 1.5px solid var(--border-strong);
+    background: var(--surface); color: var(--text); font-family: var(--font-mono); font-size: 18px; font-weight: 500;
+  }
+  .num input::placeholder { color: var(--text-faint); }
+  .num input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .num input.filled { border-color: var(--text); }
+  .num em { position: absolute; right: 12px; bottom: 15px; font-style: normal; font-size: 13px; color: var(--text-faint); pointer-events: none; }
+  .form-sub { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 18px 0 10px; }
+  .form-sub h3 { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-family: var(--font-body); }
+  .total { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); }
+  .total.bad { color: var(--sev-moderate); font-weight: 600; }
+  .more-toggle { border: none; background: none; color: var(--accent); font-weight: 600; font-size: 13.5px; cursor: pointer; padding: 10px 0 4px; }
+  .ctx-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; }
+  .ctx-row .num { flex: 1 1 120px; }
+  #ep-age { height: 50px; align-items: center; }
+  .check { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; cursor: pointer; height: 50px; }
+  .check input { width: 18px; height: 18px; accent-color: var(--accent); }
+  .reset-link { border: none; background: none; color: var(--text-faint); font-size: 13px; cursor: pointer; text-decoration: underline; }
+
+  .conf-tag { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
+  .why { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px 28px; padding: 20px 26px 24px; border-top: 1px solid var(--border); }
+  .why h4 { margin: 0 0 8px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); }
+  .why ul { margin: 0; padding-left: 18px; font-size: 14px; }
+  .why li + li { margin-top: 5px; }
+  .why .go { margin-top: 12px; }
+  .frac-val.out { color: var(--accent); font-weight: 700; }
+
   /* ============ Result ============ */
   .result { margin-top: 18px; overflow: hidden; }
   .result-head { padding: 26px 26px 22px; border-left: 6px solid var(--sev-color, var(--accent)); }
@@ -402,9 +446,8 @@
       <span class="brand-name">Globin<span>Console</span></span>
     </a>
     <nav class="topnav" aria-label="Navigation principale">
-      <a href="#outil">Interpréter</a>
-      <a href="#electrophorese">Électrophorèse</a>
-      <a href="#bases">Bases de données</a>
+      <a href="#outil" data-mode-link="geno">Génotype</a>
+      <a href="#outil" data-mode-link="ep">Électrophorèse</a>
       <a href="#catalogue">Catalogue</a>
       <button class="theme-btn" id="theme-btn" type="button" aria-label="Changer de thème (clair / sombre)" title="Thème clair / sombre">
         <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -416,12 +459,60 @@
 
 <section class="hero">
   <div class="wrap">
-    <h1>Votre génotype <em>HBB</em>, interprété en un clic.</h1>
-    <p>Saisissez les deux allèles trouvés au séquençage. Le diagnostic probable et l'électrophorèse attendue s'affichent tout de suite.</p>
+    <h1>Hémoglobinopathies, <em>interprétées</em> en un clic.</h1>
+    <p>Saisissez les variants trouvés au séquençage, ou les pourcentages d'une électrophorèse. L'orientation s'affiche tout de suite.</p>
   </div>
 </section>
 
 <main class="wrap tool" id="outil">
+  <div class="mode-tabs" role="tablist" aria-label="Mode de saisie">
+    <button class="mode-tab" role="tab" type="button" data-mode="geno" aria-selected="true" aria-controls="mode-geno">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 3c0 6 10 6 10 12s-10 6-10 6M17 3c0 6-10 6-10 12s10 6 10 6M8 7h8M8 17h8"/></svg>
+      Génotype (séquençage)
+    </button>
+    <button class="mode-tab" role="tab" type="button" data-mode="ep" aria-selected="false" aria-controls="mode-ep">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+      Résultat d'électrophorèse
+    </button>
+  </div>
+
+  <div id="mode-ep" role="tabpanel" hidden>
+    <div class="card input-card">
+      <div class="form-sub" style="margin-top:0"><h3>Fractions mesurées (%)</h3><span class="total" id="ep-total"></span></div>
+      <div class="num-grid">
+        <label class="num"><span>HbA</span><input data-k="A" inputmode="decimal" autocomplete="off" placeholder="—"><em>%</em></label>
+        <label class="num"><span>HbA2</span><input data-k="A2" inputmode="decimal" autocomplete="off" placeholder="—"><em>%</em></label>
+        <label class="num"><span>HbF</span><input data-k="F" inputmode="decimal" autocomplete="off" placeholder="—"><em>%</em></label>
+        <label class="num"><span>HbS</span><input data-k="S" inputmode="decimal" autocomplete="off" placeholder="—"><em>%</em></label>
+        <label class="num"><span>HbC</span><input data-k="C" inputmode="decimal" autocomplete="off" placeholder="—"><em>%</em></label>
+        <label class="num"><span>HbE</span><input data-k="E" inputmode="decimal" autocomplete="off" placeholder="—"><em>%</em></label>
+      </div>
+      <button type="button" class="more-toggle" id="more-toggle" aria-expanded="false">+ Autres fractions (D-Punjab, O-Arab, Lepore, variant inconnu)</button>
+      <div class="num-grid" id="more-fracs" hidden>
+        <label class="num"><span>Hb D-Punjab</span><input data-k="D" inputmode="decimal" autocomplete="off" placeholder="—"><em>%</em></label>
+        <label class="num"><span>Hb O-Arab</span><input data-k="O" inputmode="decimal" autocomplete="off" placeholder="—"><em>%</em></label>
+        <label class="num"><span>Hb Lepore</span><input data-k="Lep" inputmode="decimal" autocomplete="off" placeholder="—"><em>%</em></label>
+        <label class="num"><span>Variant inconnu</span><input data-k="X" inputmode="decimal" autocomplete="off" placeholder="—"><em>%</em></label>
+      </div>
+      <div class="form-sub"><h3>Contexte (facultatif mais utile)</h3><button type="button" class="reset-link" id="ep-reset">Tout effacer</button></div>
+      <div class="ctx-row">
+        <div class="num" style="flex:0 0 auto"><span>Âge</span>
+          <div class="seg" role="group" aria-label="Âge" id="ep-age">
+            <button type="button" data-age="adult" aria-pressed="true">&gt; 1 an</button>
+            <button type="button" data-age="infant" aria-pressed="false">&lt; 1 an</button>
+          </div>
+        </div>
+        <label class="num"><span>VGM</span><input data-c="vgm" inputmode="decimal" autocomplete="off" placeholder="—"><em>fL</em></label>
+        <label class="num"><span>TCMH</span><input data-c="tcmh" inputmode="decimal" autocomplete="off" placeholder="—"><em>pg</em></label>
+        <label class="num"><span>Ferritine</span><input data-c="ferr" inputmode="decimal" autocomplete="off" placeholder="—"><em>µg/L</em></label>
+        <label class="check"><input type="checkbox" id="ep-transf"> Transfusion &lt; 3 mois</label>
+      </div>
+      <div class="examples" id="ep-examples"><span>Exemples :</span></div>
+    </div>
+    <div id="epr-wrap" aria-live="polite"></div>
+  </div>
+
+  <div id="mode-geno" role="tabpanel">
   <div class="card input-card">
     <div class="alleles">
       <div>
@@ -474,6 +565,7 @@
     </div>
     <div id="db-wrap"></div>
   </section>
+  </div>
 
   <section class="block" id="catalogue">
     <div class="block-head">
@@ -939,6 +1031,7 @@
      4. ÉTAT & SÉLECTION
   ============================================================ */
   var selection = { 1: null, 2: null };
+  var mode = /(^|&)m=ep/.test(location.hash.replace(/^#/, "")) ? "ep" : "geno";
   var AGE_STEPS = [
     [0,"Naissance"],[1,"1 mois"],[2,"2 mois"],[3,"3 mois"],[4,"4 mois"],[6,"6 mois"],[9,"9 mois"],
     [12,"1 an"],[18,"18 mois"],[24,"2 ans"],[36,"3 ans"],[60,"5 ans"],[120,"10 ans"],[216,"Adulte"]
@@ -1344,6 +1437,7 @@
 
   /* ---------- Lien partageable (#a1=…&a2=…) ---------- */
   function writeHash() {
+    if (mode !== "geno") return;
     var parts = [];
     [1, 2].forEach(function (s) { if (selection[s]) parts.push("a" + s + "=" + encodeURIComponent(selection[s].id)); });
     var h = parts.length ? "#" + parts.join("&") : " ";
@@ -1351,7 +1445,7 @@
   }
   function readHash() {
     var h = location.hash.replace(/^#/, "");
-    if (!/a[12]=/.test(h)) return false;
+    if (!/a[12]=/.test(h) || /(^|&)m=ep/.test(h)) return false;
     h.split("&").forEach(function (kv) {
       var m = kv.match(/^a([12])=(.+)$/);
       if (!m) return;
@@ -1764,12 +1858,374 @@
   });
 
   /* ============================================================
-     11. DÉMARRAGE
+     12. INTERPRÉTATION D'UN RÉSULTAT D'ÉLECTROPHORÈSE / HPLC
+     Règles d'orientation classiques (adulte / enfant > 1 an, sans transfusion),
+     plus une logique néonatale simplifiée (< 1 an).
   ============================================================ */
+  var EP_KEYS = ["A","A2","F","S","C","E","D","O","Lep","X"];
+  var NORMAL_RANGE = { A: [95.5, 98], A2: [2.2, 3.3], F: [0, 1] };
+  var epInput = { age: "adult" };
+
+  function numVal(el) {
+    var t = el.value.trim().replace(",", ".");
+    if (t === "") return NaN;
+    var n = parseFloat(t);
+    return isFinite(n) ? n : NaN;
+  }
+
+  function readEpForm() {
+    var x = { age: epInput.age, transf: document.getElementById("ep-transf").checked };
+    Array.prototype.forEach.call(document.querySelectorAll("[data-k]"), function (el) {
+      x[el.getAttribute("data-k")] = numVal(el);
+      el.classList.toggle("filled", el.value.trim() !== "");
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-c]"), function (el) {
+      x[el.getAttribute("data-c")] = numVal(el);
+      el.classList.toggle("filled", el.value.trim() !== "");
+    });
+    return x;
+  }
+
+  function P(n) { return fmtPct(n) + " %"; }
+
+  function interpretEp(x) {
+    var entered = EP_KEYS.filter(function (k) { return !isNaN(x[k]); });
+    if (!entered.length) return null;
+    var g = function (k) { return isNaN(x[k]) ? 0 : x[k]; };
+    var A = g("A"), A2 = g("A2"), F = g("F"), S = g("S"), C = g("C"), E = g("E"), D = g("D"), O = g("O"), L = g("Lep"), X = g("X");
+    var hasA = !isNaN(x.A), hasA2 = !isNaN(x.A2);
+    var vgm = x.vgm, tcmh = x.tcmh, ferr = x.ferr;
+    var microKnown = !isNaN(vgm) || !isNaN(tcmh);
+    var micro = (!isNaN(vgm) && vgm < 80) || (!isNaN(tcmh) && tcmh < 27);
+    var ironLow = !isNaN(ferr) && ferr < 30;
+    var ironKnown = !isNaN(ferr);
+    var micTxt = microKnown
+      ? (micro ? "Microcytose / hypochromie (" : "VGM / TCMH normaux (") + [!isNaN(vgm) ? "VGM " + fmtPct(vgm) + " fL" : null, !isNaN(tcmh) ? "TCMH " + fmtPct(tcmh) + " pg" : null].filter(Boolean).join(", ") + ")"
+      : null;
+
+    var warn = [];
+    var total = entered.reduce(function (t, k) { return t + x[k]; }, 0);
+    if (entered.length >= 2 && (total < 95 || total > 105)) warn.push("Total des fractions = " + P(total) + " : vérifier la saisie (attendu ≈ 100 %).");
+    if (x.transf) warn.push("Transfusion récente : l'HbA et l'HbA2 du donneur faussent le profil. Recontrôler ≥ 3 mois après, ou passer par la biologie moléculaire.");
+    if (!hasA && entered.length >= 1 && x.age !== "infant" && (S || C || E || D || O)) warn.push("HbA non renseignée : elle est considérée à 0 %.");
+
+    function R(sev, conf, title, text, o) {
+      o = o || {};
+      var reasons = (o.reasons || []).filter(Boolean);
+      if (micTxt && o.mic !== false) reasons.push(micTxt);
+      return { sev: sev, conf: conf, title: title, text: text, reasons: reasons, diffs: o.diffs || [], next: o.next || [], geno: o.geno || null, warn: warn };
+    }
+
+    /* ---------- Nourrisson < 1 an ---------- */
+    if (x.age === "infant") {
+      var vals = {}; EP_KEYS.forEach(function (k) { vals[k] = g(k); });
+      var prof = neonatalProfile(vals);
+      var why = ["Profil « " + prof + " » (fractions ≥ 1 %, par ordre décroissant)", "Avant 1 an, l'HbF prédomine et l'HbA2 n'est pas interprétable"];
+      var ctrl = "Contrôle à 1 an et/ou étude des parents ; biologie moléculaire si doute";
+      if (S) {
+        if (A > S) return R("carrier", "Probable", "Profil " + prof + " : trait drépanocytaire probable", "HbS présente avec davantage d'HbA : portage AS le plus probable.", { reasons: why, diffs: ["Sβ⁺-thalassémie (HbS > HbA attendue en grandissant)"], next: [ctrl, "Conseil génétique aux parents"], geno: ["hbs", null], mic: false });
+        if (A > 0) return R("moderate", "Possible", "Profil " + prof + " : Sβ⁺-thalassémie possible", "HbS supérieure à l'HbA chez le nourrisson.", { reasons: why, diffs: ["Trait AS (si HbA proche de HbS)", "Drépanocytose transfusée"], next: [ctrl, "Avis spécialisé"], mic: false });
+        if (C) return R("severe", "Probable", "Profil " + prof + " : drépanocytose SC", "HbS et HbC sans HbA.", { reasons: why, next: ["Confirmer sur un 2ᵉ prélèvement", "Prise en charge spécialisée précoce"], geno: ["hbs", "hbc"], mic: false });
+        return R("severe", "Probable", "Profil " + prof + " : syndrome drépanocytaire majeur", "HbF + HbS sans HbA : drépanocytose SS ou Sβ⁰ (plus rarement S/HPFH, S/D-Punjab, S/O-Arab).", { reasons: why, diffs: ["Sβ⁰-thalassémie", "S/HPFH", "S/D-Punjab ou S/O-Arab (vérifier en pH acide / HPLC)"], next: ["Confirmer sur un 2ᵉ prélèvement + étude des parents", "Prise en charge spécialisée précoce (pénicilline, vaccinations)"], geno: ["hbs", "hbs"], mic: false });
+      }
+      if (C) return A ? R("carrier", "Probable", "Profil " + prof + " : trait HbC probable", "HbC avec HbA.", { reasons: why, next: [ctrl], geno: ["hbc", null], mic: false })
+                      : R("moderate", "Possible", "Profil " + prof + " : HbC homozygote ou C/β⁰", "HbC sans HbA.", { reasons: why, next: [ctrl], geno: ["hbc", "hbc"], mic: false });
+      if (E) return A ? R("carrier", "Probable", "Profil " + prof + " : trait HbE probable", "HbE avec HbA.", { reasons: why, next: [ctrl], geno: ["hbe", null], mic: false })
+                      : R("severe", "Possible", "Profil " + prof + " : HbE homozygote ou HbE/β⁰-thalassémie", "HbE sans HbA : la distinction se fera avec l'âge et la biologie moléculaire.", { reasons: why, next: [ctrl, "Étude des parents"], geno: ["hbe", "hbe"], mic: false });
+      if (D || O) { var dk = D ? "hbd" : "hbo", dn = D ? "Hb D-Punjab" : "Hb O-Arab";
+        return A ? R("carrier", "Probable", "Profil " + prof + " : trait " + dn, dn + " avec HbA.", { reasons: why, next: [ctrl], geno: [dk, null], mic: false })
+                 : R("moderate", "Possible", "Profil " + prof + " : " + dn + " homozygote ou " + dn + "/β⁰", dn + " sans HbA.", { reasons: why, next: [ctrl], geno: [dk, dk], mic: false }); }
+      if (X || L) return R("review", "Possible", "Profil " + prof + " : variant à identifier", "Fraction anormale chez le nourrisson.", { reasons: why, next: [ctrl, "Identification du variant (HPLC, électrophorèse capillaire, séquençage)"], mic: false });
+      if (!A && F) return R("severe", "Possible", "Profil F seul : β-thalassémie majeure possible", "Absence d'HbA chez le nourrisson.", { reasons: why, diffs: ["Grande prématurité", "HPFH / δβ homozygote (rare)"], next: ["Contrôle rapproché de l'hémogramme", "Séquençage HBB et étude des parents"], mic: false });
+      return R("benign", "Évocateur", "Profil " + prof + " : normal pour l'âge", "HbF et HbA sans fraction anormale.", { reasons: why, diffs: ["Une α-thalassémie peut donner de l'Hb Bart's à la naissance (non modélisée ici)"], next: [], mic: false });
+    }
+
+    /* ---------- Variants présents ---------- */
+    var lowA = A < 3;
+    if (S > 0.5) {
+      var rS = "HbS = " + P(S) + (hasA ? ", HbA = " + P(A) : "");
+      if (C > 5 && lowA) return R("severe", "Évocateur", "Drépanocytose SC", "HbS et HbC à des taux voisins, sans HbA : hétérozygotie composite S/C.", { reasons: [rS, "HbC = " + P(C)], diffs: ["S/C-Harlem ou S/O-Arab (O-Arab migre comme C en alcalin : vérifier en pH acide)"], next: ["Prise en charge spécialisée", "Fond d'œil (rétinopathie fréquente dans SC)"], geno: ["hbs", "hbc"] });
+      if (D > 5 && lowA) return R("severe", "Probable", "Drépanocytose S/D-Punjab", "HbS et HbD sans HbA.", { reasons: [rS, "Hb D = " + P(D)], next: ["Confirmer en pH acide / HPLC", "Prise en charge spécialisée"], geno: ["hbs", "hbd"] });
+      if (O > 5 && lowA) return R("severe", "Probable", "Drépanocytose S/O-Arab", "HbS et Hb O-Arab sans HbA : forme souvent aussi sévère que SS.", { reasons: [rS, "Hb O-Arab = " + P(O)], next: ["Prise en charge spécialisée"], geno: ["hbs", "hbo"] });
+      if (L > 3 && lowA) return R("severe", "Probable", "Drépanocytose S/Lepore", "HbS + Hb Lepore, sans HbA.", { reasons: [rS, "Hb Lepore = " + P(L)], next: ["Confirmer par MLPA / gap-PCR"], geno: ["hbs", "lepore"] });
+      if (A > S) {
+        var aD = [];
+        if (S < 35) aD.push("HbS < 35 % : α-thalassémie associée probable (moins de chaînes α → moins d'HbS)");
+        if (S < 20) aD.push("HbS < 20 % : penser aussi à une transfusion récente d'un patient SS");
+        return R("carrier", "Évocateur", "Trait drépanocytaire (AS)", "HbA supérieure à l'HbS : porteur sain d'HbS.", { reasons: [rS, "HbA > HbS"], diffs: aD, next: ["Test de solubilité / falciformation pour confirmer qu'il s'agit bien d'HbS (et non d'Hb D)", "Conseil génétique, dépistage du conjoint"], geno: ["hbs", null] });
+      }
+      if (A > 0) return R("severe", "Probable", "Drépanocytose S/β⁺-thalassémie", "HbS supérieure à l'HbA (qui reste présente) : hétérozygotie composite S/β⁺.", { reasons: [rS, "HbS > HbA", hasA2 ? "HbA2 = " + P(A2) + (A2 > 3.5 ? " (augmentée)" : "") : null], diffs: ["Drépanocytose SS ou Sβ⁰ transfusée (l'HbA vient du donneur)"], next: ["Étude des parents, séquençage HBB", "Prise en charge spécialisée"], geno: ["hbs", "ivsi6"] });
+      if (A2 > 3.5 && (micro || !microKnown)) return R("severe", "Probable", "Drépanocytose S/β⁰-thalassémie probable", "HbS sans HbA, avec HbA2 augmentée" + (micro ? " et microcytose" : "") + ".", { reasons: [rS, "HbA2 = " + P(A2) + " (> 3,5 %)", "Pas d'HbA"], diffs: ["Drépanocytose SS avec α-thalassémie associée (HbA2 aussi un peu augmentée, microcytose)"], next: ["Étude des parents, séquençage HBB, génotype α", "Prise en charge spécialisée"], geno: ["hbs", "cd39"] });
+      if (F >= 20 && !micro && (!hasA2 || A2 <= 3.5)) return R("review", "Possible", "Drépanocytose SS à HbF élevée ou S/HPFH", "HbS sans HbA avec HbF ≥ 20 % et VGM normal.", { reasons: [rS, "HbF = " + P(F)], diffs: ["S/HPFH (HbF pancellulaire 20-30 %, peu symptomatique)", "SS sous hydroxyurée", "SS avec haplotype à HbF élevée (Arabo-indien, Sénégal)"], next: ["Étude des parents, MLPA du cluster β-globine", "Traitement en cours ? (hydroxyurée)"], geno: ["hbs", "hbs"] });
+      return R("severe", "Évocateur", "Drépanocytose homozygote (SS) probable", "HbS majoritaire, sans HbA.", { reasons: [rS, F ? "HbF = " + P(F) : null, "Pas d'HbA"], diffs: ["Sβ⁰-thalassémie (HbA2 > 3,5 %, microcytose)", "S/HPFH (HbF > 20 %)", "S/D-Punjab ou S/O-Arab si la technique ne les sépare pas"], next: ["Confirmer : test de solubilité, pH acide ou HPLC, étude des parents", "Prise en charge spécialisée"], geno: ["hbs", "hbs"] });
+    }
+
+    function simpleVariant(val, name, key, extra) {
+      var rr = name + " = " + P(val) + (hasA ? ", HbA = " + P(A) : "");
+      if (A > val) {
+        var dd = (extra && extra.low && val < extra.low) ? [name + " < " + extra.low + " % : α-thalassémie associée possible"] : [];
+        if (extra && extra.diffs) dd = dd.concat(extra.diffs);
+        return R("carrier", "Évocateur", "Trait " + name + " (porteur)", "HbA majoritaire avec " + name + " : hétérozygotie, asymptomatique.", { reasons: [rr], diffs: dd, next: ["Conseil génétique, dépistage du conjoint"].concat(extra && extra.next || []), geno: [key, null] });
+      }
+      if (A > 0) return R("moderate", "Possible", name + "/β⁺-thalassémie possible", name + " supérieure à l'HbA.", { reasons: [rr], diffs: ["Transfusion récente d'un homozygote"], next: ["Séquençage HBB, étude des parents"] });
+      return R(extra && extra.homoSev || "moderate", "Probable", name + " homozygote ou " + name + "/β⁰-thalassémie", name + " sans HbA. " + (micro ? "La microcytose est compatible avec les deux." : ""), { reasons: [rr, F ? "HbF = " + P(F) : null], diffs: [name + "/β⁰-thalassémie (HbF plus élevée, anémie plus marquée)"], next: ["Étude des parents, séquençage HBB"], geno: [key, key] });
+    }
+
+    if (C > 0.5) return simpleVariant(C, "HbC", "hbc", { low: 30, diffs: ["Hb O-Arab et HbC co-migrent en alcalin : vérifier en pH acide"] });
+    if (E > 0.5) {
+      if (!lowA || F < 15) return simpleVariant(E, "HbE", "hbe", { low: 25, next: ["En HPLC, l'HbE élue avec l'HbA2 : vérifier la technique"] });
+      return R("severe", "Probable", "HbE/β⁰-thalassémie", "HbE + HbF élevée, sans HbA : un des syndromes thalassémiques majeurs les plus fréquents.", { reasons: ["HbE = " + P(E), "HbF = " + P(F), "Pas d'HbA"], diffs: ["HbE homozygote (HbF plus basse, peu symptomatique)"], next: ["Séquençage HBB, étude des parents", "Prise en charge spécialisée"], geno: ["hbe", "cd39"] });
+    }
+    if (D > 0.5) return simpleVariant(D, "Hb D-Punjab", "hbd", { diffs: ["Vérifier qu'il ne s'agit pas d'HbS (test de solubilité négatif pour D)"] });
+    if (O > 0.5) return simpleVariant(O, "Hb O-Arab", "hbo", {});
+    if (L > 0.5) {
+      if (A > 0) return R("carrier", "Probable", "Trait Hb Lepore", "Hb Lepore (≈ 10 %) avec HbA : profil de β-thalassémie mineure à HbA2 normale ou basse.", { reasons: ["Hb Lepore = " + P(L), hasA2 ? "HbA2 = " + P(A2) : null], next: ["Confirmer par MLPA / gap-PCR (non visible en Sanger)", "Conseil génétique"], geno: ["lepore", null] });
+      return R("severe", "Possible", "Hb Lepore homozygote ou Lepore/β⁰", "Hb Lepore + HbF, sans HbA.", { reasons: ["Hb Lepore = " + P(L), "HbF = " + P(F)], next: ["MLPA / gap-PCR, séquençage HBB"], geno: ["lepore", "lepore"] });
+    }
+    if (X > 0.5) {
+      var xd = X >= 30 ? "Fraction de 30-50 % : évoque plutôt un variant de chaîne β." : (X <= 28 ? "Fraction < 25-28 % : évoque plutôt un variant de chaîne α (ou un β instable)." : "");
+      return R("review", "Possible", "Variant de l'hémoglobine à identifier", "Fraction anormale de " + P(X) + ". " + xd, { reasons: ["Variant inconnu = " + P(X)], next: ["Identification : HPLC, électrophorèse capillaire, pH acide, spectrométrie de masse", "Séquençage HBB (et HBA1/HBA2 si fraction < 25 %)"] });
+    }
+
+    /* ---------- Pas de variant : HbA, HbA2, HbF ---------- */
+    if (hasA2 && A2 > 10) return R("review", "Possible", "« HbA2 » > 10 % : HbE ou variant co-éluant", "Un vrai HbA2 dépasse rarement 8-9 %. En HPLC, l'HbE (et d'autres variants) éluent dans la fenêtre A2.", { reasons: ["HbA2 = " + P(A2)], next: ["Vérifier en électrophorèse capillaire ou en pH acide", "Séquençage HBB"] });
+
+    if (F >= 50 || (hasA && A < 30 && F >= 20)) {
+      if (A < 2) return R("severe", "Évocateur", "β-thalassémie majeure (β⁰/β⁰) probable", "HbF quasi exclusive, sans HbA.", { reasons: ["HbF = " + P(F), "Pas d'HbA", hasA2 ? "HbA2 = " + P(A2) : null], diffs: ["δβ-thal / HPFH homozygote (rare, pas d'anémie sévère)", "Prélèvement post-transfusionnel impossible ici (pas d'HbA)"], next: ["Séquençage HBB des deux allèles, étude des parents", "Prise en charge spécialisée (transfusions, chélation)"], geno: ["cd39", "cd39"] });
+      return R("severe", "Probable", "β-thalassémie intermédiaire à majeure", "HbF très élevée avec un peu d'HbA : β⁺/β⁰ ou β⁺/β⁺.", { reasons: ["HbF = " + P(F), "HbA = " + P(A), hasA2 ? "HbA2 = " + P(A2) : null], diffs: ["β⁰/β⁰ transfusé (l'HbA vient du donneur)"], next: ["Séquençage HBB, étude des parents", "Prise en charge spécialisée"], geno: ["cd39", "ivsi110"] });
+    }
+
+    if (hasA2 && A2 >= 3.5) {
+      var rT = ["HbA2 = " + P(A2) + " (≥ 3,5 %)", F >= 2 ? "HbF = " + P(F) + " (augmentée)" : null];
+      var dT = [];
+      if (!micro && microKnown) dT.push("VGM normal : allèle β⁺ léger, ou α-thalassémie associée qui corrige le VGM");
+      if (ironLow) dT.push("La carence martiale ne fait pas monter l'HbA2 : le trait reste fiable");
+      if (A2 > 6.5) return R("carrier", "Probable", "Trait β-thalassémique — délétion β probable", "HbA2 très élevée (> 6,5 %)" + (F >= 3 ? " avec HbF augmentée" : "") + " : profil typique des délétions du promoteur / du gène β.", { reasons: rT, diffs: ["Trait β ponctuel avec HbA2 haute", "HbE ou variant co-éluant si > 10 %"], next: ["Séquençage HBB ; si négatif → MLPA du cluster β", "Conseil génétique, dépistage du conjoint"], geno: ["largedel", null] });
+      return R("carrier", "Évocateur", "Trait β-thalassémique (porteur)", "HbA2 ≥ 3,5 %" + (micro ? " avec microcytose" : "") + " : hétérozygotie β-thalassémique.", { reasons: rT, diffs: dT, next: ["Séquençage HBB pour identifier l'allèle", "Conseil génétique, dépistage du conjoint (risque de forme majeure si les deux sont porteurs)"], geno: ["cd39", null] });
+    }
+
+    if (hasA2 && A2 >= 3.2) {
+      return R("review", "Possible", "HbA2 limite (3,2 – 3,5 %)", "Zone grise : ni normale, ni franchement augmentée.", { reasons: ["HbA2 = " + P(A2)], diffs: ["Allèle β⁺ silencieux / léger (−101, CAP+1, IVS-I-6…)", "Trait β masqué par une carence martiale" + (ironLow ? " (ferritine basse ici)" : ""), "Association α- et β-thalassémie"], next: [ironLow ? "Corriger la carence martiale puis recontrôler" : (ironKnown ? "Séquençage HBB si microcytose" : "Doser la ferritine"), "Séquençage HBB si le doute persiste ou avant un conseil génétique"] });
+    }
+
+    if (F >= 5) {
+      var rF = ["HbF = " + P(F), hasA2 ? "HbA2 = " + P(A2) + " (normale ou basse)" : null];
+      if (F >= 15 && !micro) return R("carrier", "Probable", "HPFH hétérozygote probable", "HbF 15-30 % sans microcytose ni HbA2 augmentée : persistance héréditaire de l'HbF, sans conséquence.", { reasons: rF, diffs: ["δβ-thalassémie (microcytose, HbF hétérocellulaire)", "Traitement par hydroxyurée, grossesse"], next: ["MLPA / gap-PCR du cluster β-globine", "Conseil génétique : associée à un β⁰ ou à l'HbS chez le conjoint, elle atténue la maladie"] });
+      if (micro || F >= 15) return R("carrier", "Probable", "δβ-thalassémie hétérozygote probable", "HbF augmentée avec HbA2 normale ou basse" + (micro ? " et microcytose" : "") + ".", { reasons: rF, diffs: ["HPFH (VGM normal, HbF pancellulaire)", "Hb Lepore si une petite fraction en position S est visible"], next: ["MLPA / gap-PCR du cluster β-globine", "Conseil génétique, dépistage du conjoint"] });
+      return R("review", "Possible", "Élévation modérée de l'HbF", "HbF entre 5 et 15 % avec hémogramme normal.", { reasons: rF, diffs: ["HPFH non délétionnelle (promoteurs HBG)", "Grossesse, stress érythropoïétique, hydroxyurée", "Variant KLF1"], next: ["Contexte clinique et médicamenteux", "Étude du cluster β si le résultat est confirmé"] });
+    }
+
+    var lowA2 = hasA2 && A2 < 2.0;
+    if (micro || lowA2) {
+      if (ironLow) return R("review", "Probable", "Carence martiale probable", "Microcytose avec ferritine basse" + (lowA2 ? " et HbA2 abaissée" : "") + ". La carence martiale abaisse l'HbA2 et peut masquer un trait β.", { reasons: [ "Ferritine = " + fmtPct(ferr) + " µg/L", hasA2 ? "HbA2 = " + P(A2) : null], diffs: ["Trait β masqué", "α-thalassémie associée"], next: ["Traiter la carence puis recontrôler l'électrophorèse"] });
+      if (micro) return R("carrier", ironKnown ? "Probable" : "Possible", "α-thalassémie probable", "Microcytose " + (ironKnown ? "sans carence martiale" : "(ferritine non renseignée)") + ", avec HbA2 et HbF normales" + (lowA2 ? " ou basses" : "") + " : profil typique d'une α-thalassémie (−α/−α ou −−/αα).", { reasons: [hasA2 ? "HbA2 = " + P(A2) + (lowA2 ? " (basse)" : " (normale)") : null, ironKnown ? "Ferritine = " + fmtPct(ferr) + " µg/L (normale)" : null], diffs: [ironKnown ? null : "Carence martiale (doser la ferritine)", "Inflammation chronique", "δ-thalassémie associée à un trait β (HbA2 faussement normale)"].filter(Boolean), next: ["Étude moléculaire HBA1/HBA2 (gap-PCR −α3.7, −α4.2, −−MED, −−SEA…)", "Recherche de corps d'HbH", "Conseil génétique si −−/αα (risque d'hydrops fœtal)"] });
+      return R("review", "Possible", "HbA2 basse isolée", "HbA2 < 2 % sans microcytose connue.", { reasons: ["HbA2 = " + P(A2)], diffs: ["Carence martiale débutante", "α-thalassémie", "δ-thalassémie ou variant δ (HbA2 dédoublée)"], next: ["NFS, ferritine", "Rechercher une fraction HbA2' (variant δ) sur le tracé"] });
+    }
+
+    var nd = [];
+    if (!microKnown) nd.push("Sans VGM / TCMH, une α-thalassémie (−α/αα, −α/−α) ne peut pas être exclue : elle donne une électrophorèse normale");
+    return R("benign", "Évocateur", "Électrophorèse normale", "HbA, HbA2 et HbF dans les valeurs usuelles, sans fraction anormale.", { reasons: [hasA ? "HbA = " + P(A) : null, hasA2 ? "HbA2 = " + P(A2) : null, !isNaN(x.F) ? "HbF = " + P(F) : null], diffs: nd, next: micro ? [] : (microKnown ? [] : ["Vérifier VGM / TCMH"]) });
+  }
+
+  /* ---------- Rendu ---------- */
+  var eprWrap = document.getElementById("epr-wrap");
+
+  function renderEpResult() {
+    var x = readEpForm();
+    var entered = EP_KEYS.filter(function (k) { return !isNaN(x[k]); });
+    var total = entered.reduce(function (t, k) { return t + x[k]; }, 0);
+    var totEl = document.getElementById("ep-total");
+    totEl.textContent = entered.length ? "Total : " + fmtPct(total) + " %" : "";
+    totEl.classList.toggle("bad", entered.length >= 2 && (total < 95 || total > 105));
+    writeEpHash(x);
+
+    var res = interpretEp(x);
+    if (!res) {
+      eprWrap.innerHTML = '<div class="empty-state"><strong>Saisissez au moins HbA2 et HbF</strong> (et HbS, HbC, HbE si présentes).<br>Ajoutez le VGM, la TCMH et la ferritine pour une orientation plus précise.</div>';
+      return;
+    }
+    var sev = SEV[res.sev];
+    function list(arr) { return '<ul>' + arr.map(function (t) { return '<li>' + escapeHtml(t) + '</li>'; }).join("") + '</ul>'; }
+    var cols = '';
+    if (res.reasons.length) cols += '<div><h4>Arguments</h4>' + list(res.reasons) + '</div>';
+    if (res.diffs.length) cols += '<div><h4>À discuter</h4>' + list(res.diffs) + '</div>';
+    if (res.next.length || res.geno) cols += '<div><h4>Conduite à tenir</h4>' + (res.next.length ? list(res.next) : '') +
+      (res.geno ? '<div class="go"><button type="button" class="btn-sm" id="ep-to-geno">' + (res.geno.some(function (id) { return ["cd39","ivsi6","ivsi110","largedel"].indexOf(id) !== -1; }) ? "Voir un génotype exemple →" : "Voir le génotype correspondant →") + '</button></div>' : '') + '</div>';
+
+    var vals = {}; EP_KEYS.forEach(function (k) { vals[k] = isNaN(x[k]) ? 0 : x[k]; });
+    var keys = FRAC_ORDER.filter(function (k) { return !isNaN(x[k]); });
+
+    eprWrap.innerHTML =
+      '<article class="card result" style="--sev-color:var(--sev-' + res.sev + ')">' +
+        '<div class="result-head">' +
+          '<div class="result-top">' +
+            '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">' +
+              '<span class="sev-pill tone-' + res.sev + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + sev.icon + '</svg>' + sev.label + '</span>' +
+              '<span class="conf-tag">' + escapeHtml(res.conf) + '</span>' +
+            '</div>' +
+            '<div class="result-actions">' +
+              '<button class="icon-btn" type="button" id="ep-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copier</button>' +
+              '<button class="icon-btn" type="button" id="ep-share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>Lien</button>' +
+            '</div>' +
+          '</div>' +
+          '<h2>' + escapeHtml(res.title) + '</h2>' +
+          '<p class="summary">' + escapeHtml(res.text) + '</p>' +
+          (res.warn.length ? '<div class="flags">' + res.warn.map(function (t) {
+            return '<div class="flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20L12 3z"/><path d="M12 10v4M12 18h.01"/></svg><span>' + escapeHtml(t) + '</span></div>';
+          }).join("") + '</div>' : '') +
+        '</div>' +
+        (cols ? '<div class="why">' + cols + '</div>' : '') +
+      '</article>' +
+      '<section class="block" style="padding-top:28px">' +
+        '<div class="card"><div class="ep">' +
+          '<div class="ep-left">' +
+            '<div class="ep-toolbar"><h3 style="font-size:16px">Votre profil sur gel</h3>' +
+              '<div class="seg" role="group" aria-label="Technique">' +
+                '<button type="button" data-etech="alk" aria-pressed="' + (epState.tech === "alk") + '">Alcaline pH 8,6</button>' +
+                '<button type="button" data-etech="acid" aria-pressed="' + (epState.tech === "acid") + '">Acide pH 6,2</button>' +
+              '</div></div>' +
+            '<div class="gel-wrap" id="ugel"></div>' +
+            '<div class="gel-caption">' + TECH[epState.tech].caption + '</div>' +
+          '</div>' +
+          '<div class="ep-right">' +
+            '<div class="frac-head"><h3>Vos valeurs</h3></div>' +
+            keys.map(function (k) {
+              var v = x[k], rg = x.age !== "infant" ? NORMAL_RANGE[k] : null;
+              var out = rg ? (v < rg[0] || v > rg[1]) : (k !== "A" && k !== "A2" && k !== "F" && v > 0);
+              var range = rg ? '<span class="frac-range" style="left:' + rg[0] + '%;width:' + Math.max(0.5, rg[1] - rg[0]) + '%"></span>' : "";
+              return '<div class="frac"><span class="frac-name">' + FRAC_NAME[k] + '</span>' +
+                '<span class="frac-track"><span class="frac-bar" style="width:' + Math.min(100, v) + '%"></span>' + range + '</span>' +
+                '<span class="frac-val' + (out ? ' out' : '') + '">' + fmtPct(v) + ' %' + (rg ? '<small>N : ' + fmtPct(rg[0]) + '–' + fmtPct(rg[1]) + '</small>' : '') + '</span></div>';
+            }).join("") +
+            '<div class="gel-caption">' + (x.age !== "infant" ? 'Trait = valeurs normales de l\'adulte. En rouge : hors norme ou fraction anormale.' : 'Nourrisson : pas de valeurs de référence adulte.') + '</div>' +
+          '</div>' +
+        '</div></div>' +
+      '</section>';
+
+    var ug = document.getElementById("ugel");
+    ug.innerHTML = gelSvg(vals, epState.tech, 1, "Variant", ug.clientWidth);
+    Array.prototype.forEach.call(eprWrap.querySelectorAll("[data-etech]"), function (b) {
+      b.addEventListener("click", function () { epState.tech = b.getAttribute("data-etech"); renderEpResult(); refreshEp(); });
+    });
+    var go = document.getElementById("ep-to-geno");
+    if (go) go.addEventListener("click", function () {
+      setAllele(1, findAllele(res.geno[0]), true);
+      setAllele(2, res.geno[1] ? findAllele(res.geno[1]) : null, true);
+      setMode("geno");
+      update();
+    });
+    document.getElementById("ep-copy").addEventListener("click", function () {
+      var vtxt = keys.map(function (k) { return FRAC_NAME[k] + " " + fmtPct(x[k]) + " %"; }).join(", ");
+      var txt = "Électrophorèse de l'Hb : " + vtxt +
+        "\nOrientation : " + res.title + " (" + res.conf.toLowerCase() + ") — " + res.text +
+        (res.reasons.length ? "\nArguments : " + res.reasons.join(" ; ") : "") +
+        (res.diffs.length ? "\nÀ discuter : " + res.diffs.join(" ; ") : "") +
+        (res.next.length ? "\nConduite : " + res.next.join(" ; ") : "") +
+        "\n(Globin Console — aide à l'interprétation, à valider)";
+      copyText(txt, "Résultat copié");
+    });
+    document.getElementById("ep-share").addEventListener("click", function () { copyText(location.href, "Lien copié"); });
+  }
+
+  // Champs : interprétation instantanée
+  Array.prototype.forEach.call(document.querySelectorAll("#mode-ep [data-k], #mode-ep [data-c]"), function (el) {
+    el.addEventListener("input", renderEpResult);
+  });
+  document.getElementById("ep-transf").addEventListener("change", renderEpResult);
+  Array.prototype.forEach.call(document.querySelectorAll("[data-age]"), function (b) {
+    b.addEventListener("click", function () { setEpAge(b.getAttribute("data-age")); renderEpResult(); });
+  });
+  function setEpAge(a) {
+    epInput.age = a;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-age]"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-age") === a)); });
+  }
+  var moreBtn = document.getElementById("more-toggle");
+  function showMore(on) {
+    document.getElementById("more-fracs").hidden = !on;
+    moreBtn.setAttribute("aria-expanded", String(on));
+    moreBtn.textContent = on ? "− Masquer les autres fractions" : "+ Autres fractions (D-Punjab, O-Arab, Lepore, variant inconnu)";
+  }
+  moreBtn.addEventListener("click", function () { showMore(document.getElementById("more-fracs").hidden); });
+
+  function fillEp(o) {
+    Array.prototype.forEach.call(document.querySelectorAll("#mode-ep [data-k], #mode-ep [data-c]"), function (el) {
+      var k = el.getAttribute("data-k") || el.getAttribute("data-c");
+      el.value = o[k] != null ? String(o[k]).replace(".", ",") : "";
+    });
+    document.getElementById("ep-transf").checked = !!o.transf;
+    setEpAge(o.age || "adult");
+    if (o.D != null || o.O != null || o.Lep != null || o.X != null) showMore(true);
+  }
+  document.getElementById("ep-reset").addEventListener("click", function () { fillEp({}); renderEpResult(); });
+
+  var EP_EXAMPLES = [
+    ["Trait β-thal", { A: 92.6, A2: 5.4, F: 2, vgm: 64, tcmh: 20.5, ferr: 85 }],
+    ["Trait AS", { A: 58.5, S: 38, A2: 3.5, F: 0 }],
+    ["SS", { S: 88.5, F: 8.5, A2: 3, A: 0 }],
+    ["SC", { S: 50, C: 46.5, F: 1.5, A2: 2, A: 0 }],
+    ["Sβ⁺", { A: 12, S: 77, F: 6, A2: 5, vgm: 70 }],
+    ["β-thal majeure", { A: 0, F: 96, A2: 4 }],
+    ["HPFH", { A: 72, F: 25.8, A2: 2.2, vgm: 86, tcmh: 29 }],
+    ["α-thal ?", { A: 97.4, A2: 2.3, F: 0.3, vgm: 67, tcmh: 21, ferr: 140 }],
+    ["Carence martiale", { A: 97.9, A2: 1.9, F: 0.2, vgm: 71, tcmh: 22, ferr: 6 }],
+    ["Nouveau-né FS", { F: 82, S: 18, age: "infant" }]
+  ];
+  var epEx = document.getElementById("ep-examples");
+  EP_EXAMPLES.forEach(function (ex) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = ex[0];
+    b.addEventListener("click", function () { fillEp(ex[1]); renderEpResult(); });
+    epEx.appendChild(b);
+  });
+
+  /* ---------- Lien partageable (#m=ep&A=…) ---------- */
+  function writeEpHash(x) {
+    if (mode !== "ep") return;
+    var parts = ["m=ep"];
+    EP_KEYS.concat(["vgm","tcmh","ferr"]).forEach(function (k) { if (!isNaN(x[k])) parts.push(k + "=" + x[k]); });
+    if (x.age === "infant") parts.push("age=infant");
+    if (x.transf) parts.push("tr=1");
+    try { history.replaceState(null, "", "#" + parts.join("&")); } catch (e) {}
+  }
+  function readEpHash() {
+    var o = {};
+    location.hash.replace(/^#/, "").split("&").forEach(function (kv) {
+      var m = kv.split("=");
+      if (m.length !== 2) return;
+      if (m[0] === "age") o.age = m[1];
+      else if (m[0] === "tr") o.transf = m[1] === "1";
+      else if (EP_KEYS.concat(["vgm","tcmh","ferr"]).indexOf(m[0]) !== -1 && isFinite(parseFloat(m[1]))) o[m[0]] = parseFloat(m[1]);
+    });
+    fillEp(o);
+  }
+
+  /* ---------- Bascule de mode ---------- */
+  function setMode(m, initial) {
+    mode = m;
+    document.getElementById("mode-geno").hidden = m !== "geno";
+    document.getElementById("mode-ep").hidden = m !== "ep";
+    Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function (b) { b.setAttribute("aria-selected", String(b.getAttribute("data-mode") === m)); });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-mode-link]"), function (a) { a.classList.toggle("active", a.getAttribute("data-mode-link") === m); });
+    if (m === "geno") { writeHash(); redrawGel(); }
+    else renderEpResult();
+    if (!initial) document.getElementById("outil").scrollIntoView({ block: "start" });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function (b) {
+    b.addEventListener("click", function () { setMode(b.getAttribute("data-mode"), true); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-mode-link]"), function (a) {
+    a.addEventListener("click", function (e) { e.preventDefault(); setMode(a.getAttribute("data-mode-link")); });
+  });
+
+  /* ============================================================
+     13. DÉMARRAGE
+  ============================================================ */
+  var startEp = mode === "ep";
   readHash();
   syncInput(1); syncInput(2);
   update();
   renderCatalogue();
+  if (startEp) { readEpHash(); setMode("ep", true); } else renderEpResult();
 })();
 </script>
 </body>
